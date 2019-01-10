@@ -89,7 +89,7 @@ find_split <- function(
 get_nodes <- function(
   df, split_vars, formula, predictors = 3, 
   n_splits = 10, min_obs = 3, max_steps = 4, pval = 0.05,
-  step = 0, verbose = FALSE, state = NULL) {
+  step = 0, verbose = FALSE, state = NULL, ...) {
   
   split <- find_split(df, split_vars, formula, fun = lm, predictors, min_obs, n_splits, ...)
   

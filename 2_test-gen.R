@@ -33,7 +33,7 @@ reg_df$Ytilde <- reg_df$Y - coef(mod_filter)[1] * W %*% reg_df$Y
 
 summary(mod_true)
 
-source("reg_tree/model-fun.R")
+source("reg_tree/8_model-fun.R")
 (nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2"), 
           formula = "Ytilde ~ X2 + X3", verbose = TRUE, max_steps = 10, min_obs = 20, pval = 0.001))
 

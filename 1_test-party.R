@@ -1,7 +1,7 @@
 library(partykit)
 load("data/processed_data.Rdata")
 
-source("reg_tree/data-fun.R")
+source("reg_tree/9_data-fun.R")
 
 gva <- dfify(depvar_list$gva_tot)
 

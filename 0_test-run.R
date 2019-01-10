@@ -1,6 +1,6 @@
 load("data/processed_data.Rdata")
 
-source("reg_tree/data-fun.R")
+source("reg_tree/9_data-fun.R")
 
 gva <- dfify(depvar_list$gva_tot)
 
@@ -17,7 +17,7 @@ names(data) <- c("gva", "init", "emp_a", "emp_i", "inv_a", "inv_i")
 mdl <- lm(gva ~ init + emp_a + emp_i + inv_a + inv_i, data)
 summary(mdl)
 
-source("reg_tree/model-fun.R")
+source("reg_tree/8_model-fun.R")
 
 tree <- get_nodes(data, 
                   split_vars = c("emp_a", "emp_i", "inv_a", "inv_i"), 

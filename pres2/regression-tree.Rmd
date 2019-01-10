@@ -9,5 +9,25 @@ output:
     colortheme: seahorse
 ---
 
-## Hallo
-Welt
+## Daten
+
+- Wie und warum eingeschränkt (2000 onwards)
+- Welche Variablen & Länder
+- Hübscher Plot
+
+
+## Regression Tree
+
+- Code erklären
+- Tree visualisieren
+- Räumliche Elemente verloren (Wie counteracten)
+
+
+## Ergebnisse
+
+- Clubs
+- LM vs. SAR vs. SEM
+
+
+## Literatur
+<!-- Leave me alone -->

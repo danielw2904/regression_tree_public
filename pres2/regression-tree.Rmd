@@ -1,0 +1,13 @@
+---
+title: "Covergence clubs and regression trees"
+subtitle: "0686 - Spatial Economics"
+author: "Nikolas, Philipp, Lukas & Daniel"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  beamer_presentation:
+    theme: metropolis
+    colortheme: seahorse
+---
+
+## Hallo
+Welt

@@ -177,6 +177,7 @@ poly <- poly[substring(poly$NUTS_ID, 1, 2) != "ME", ]
 #poly <- poly[substring(poly$NUTS_ID, 1, 2) != "MT", ]
 poly <- poly[substring(poly$NUTS_ID, 1, 2) != "TR", ]
 poly <- poly[substring(poly$NUTS_ID, 1, 2) != "CH", ]
+poly <- poly[substring(poly$NUTS_ID, 1, 2) != "HR", ]
 poly <- poly[poly$NUTS_ID != "IS00", ]
 poly <- poly[poly$NUTS_ID != "PT20", ]
 poly <- poly[poly$NUTS_ID != "PT30", ]
@@ -233,20 +234,29 @@ gdp_pc_gr$GDP_gr_9115 <- gdp_pc_gr$GDP_pc_2015 - gdp_pc_gr$GDP_pc_1991
 gdp_pc_gr$GDP_gr_9515 <- gdp_pc_gr$GDP_pc_2015 - gdp_pc_gr$GDP_pc_1995
 gdp_pc_gr$GDP_gr_9505 <- gdp_pc_gr$GDP_pc_2005 - gdp_pc_gr$GDP_pc_1995
 gdp_pc_gr$GDP_gr_0515 <- gdp_pc_gr$GDP_pc_2015 - gdp_pc_gr$GDP_pc_2005
+gdp_pc_gr$GDP_gr_0015 <- gdp_pc_gr$GDP_pc_2015 - gdp_pc_gr$GDP_pc_2000
+gdp_pc_gr$GDP_gr_0007 <- gdp_pc_gr$GDP_pc_2007 - gdp_pc_gr$GDP_pc_2000
+gdp_pc_gr$GDP_gr_0815 <- gdp_pc_gr$GDP_pc_2015 - gdp_pc_gr$GDP_pc_2008
 
-gdp_pc_gr <- gdp_pc_gr[ , c(1, 38:42)]
+
+gdp_pc_gr <- gdp_pc_gr[ , c(1, 38:ncol(gdp_pc_gr))]
 
 gva_pc_gr <- depvar_list$gva_pc
-gva_pc_gr$GDP_gr_8015 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1980
-gva_pc_gr$GDP_gr_9115 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1991
-gva_pc_gr$GDP_gr_9515 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1995
-gva_pc_gr$GDP_gr_9505 <- gva_pc_gr$GVA_pc_2005 - gva_pc_gr$GVA_pc_1995
-gva_pc_gr$GDP_gr_0515 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_2005
+gva_pc_gr$GVA_gr_8015 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1980
+gva_pc_gr$GVA_gr_9115 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1991
+gva_pc_gr$GVA_gr_9515 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_1995
+gva_pc_gr$GVA_gr_9505 <- gva_pc_gr$GVA_pc_2005 - gva_pc_gr$GVA_pc_1995
+gva_pc_gr$GVA_gr_0515 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_2005
+gva_pc_gr$GVA_gr_0015 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_2000
+gva_pc_gr$GVA_gr_0007 <- gva_pc_gr$GVA_pc_2007 - gva_pc_gr$GVA_pc_2000
+gva_pc_gr$GVA_gr_0815 <- gva_pc_gr$GVA_pc_2015 - gva_pc_gr$GVA_pc_2008
 
-gva_pc_gr <- gva_pc_gr[ , c(1, 38:42)]
+
+gva_pc_gr <- gva_pc_gr[ , c(1, 38:ncol(gva_pc_gr))]
 
 depvar_list[["gva_pc_gr"]] <- gva_pc_gr
 depvar_list[["gdp_pc_gr"]] <- gdp_pc_gr
+
 # split_names <- names(split_list)
 # 
 # for(i in split_names){
@@ -254,7 +264,6 @@ depvar_list[["gdp_pc_gr"]] <- gdp_pc_gr
 #   assign(i, split_list[[i]])
 #   
 # }
-
 
 # depvar_names <- names(depvar_list)
 # 

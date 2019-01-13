@@ -44,13 +44,13 @@ pop_tot <- read_delim("data/CSV/POP_total.csv",
 pop_tot <- fix_data(pop_tot, "POP_tot")
 
 gva_pc <- gva_tot
-gva_pc[ , 2:ncol(gva_pc)] <- gva_tot[ , 2:ncol(gva_tot)] * 1000 / pop_tot[ , 2:ncol(pop_tot)] * 1000
+gva_pc[ , 2:ncol(gva_pc)] <- gva_tot[ , 2:ncol(gva_tot)] / pop_tot[ , 2:ncol(pop_tot)] * 10^6
 names(gva_pc)[2:ncol(gva_pc)] <- paste0("GVA_pc_", seq(1980, 2015))
 
 
 
 gdp_pc <- gdp_tot
-gdp_pc[ , 2:ncol(gdp_pc)] <- gdp_tot[ , 2:ncol(gdp_tot)] * 1000 / pop_tot[ , 2:ncol(pop_tot)] * 1000
+gdp_pc[ , 2:ncol(gdp_pc)] <- gdp_tot[ , 2:ncol(gdp_tot)] / pop_tot[ , 2:ncol(pop_tot)] * 10^6
 names(gdp_pc)[2:ncol(gdp_pc)] <- paste0("GDP_pc_", seq(1980, 2015))
 
 

@@ -1,32 +1,61 @@
 ---
-title: "Covergence clubs and regression trees"
+title: "Covergence Clubs and Regression Trees"
 subtitle: "0686 - Spatial Economics"
 author: "Nikolas, Philipp, Lukas & Daniel"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
+bibliography: refs.bibtex
 output: 
   beamer_presentation:
     theme: metropolis
-    colortheme: seahorse
 ---
 
-## Daten
+## Data
 
 - Wie und warum eingeschränkt (2000 onwards)
 - Welche Variablen & Länder
 - Hübscher Plot
 
 
+## Oh what a merry regression tree
+
+<!-- We try to split the observations into clubs akin to: -->
+- Split observations into clubs:
+
+```{r echo=TRUE, eval=FALSE}
+tree <- function(data, split_vars, end_criteria) {
+  split <- find_best_split(...)
+  
+  if (!end_criteria) {
+    return(list(tree(split$data1, ...),
+                tree(split$data2, ...)))
+  } else { # if(end_criteria)
+    return(data)
+  }
+}
+```
+
 ## Regression Tree
 
-- Code erklären
-- Tree visualisieren
-- Räumliche Elemente verloren (Wie counteracten)
+<!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
+- Receive a tree-structure of data:
 
+<!-- Add pretty (?) tree, dummy ahead: -->
+![](../pres1/tree.png){width=80%}
 
-## Ergebnisse
+<!-- Unfortunately we have to rely on spatially filtered data for this process, as there is no theoretically well-founded way of fitting spatial models to recursive subsets. -->
+- Caveat: linear model with spatially filtered data
+<!-- Mention fancy distance stuff -->
 
-- Clubs
-- LM vs. SAR vs. SEM
+## Regression Tree
+
+- Tested with simulated and real data
+- Compares well against partykit [@hothorn15]
+<!-- Maybe show we did / it does -->
+
+## Results
+
+- Plot of clubs
+- some first LM vs. SAR vs. SEM comparisons
 
 
 ## Literatur

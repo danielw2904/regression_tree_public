@@ -2,6 +2,8 @@ load("./data/processed_data.Rdata")
 
 library(ggplot2)
 library(viridis)
+library(dplyr)
+library(rgeos)
 
 
 poly_ggplot <- gBuffer(poly, byid=TRUE, width=0)

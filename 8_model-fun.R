@@ -165,7 +165,7 @@ node_summary <- function(node, grp){
   #print(nod)
   grp <- l2df(grp, ncol = 1)
   colnames(grp) <- 'direction'
-  grp[nrow(grp),] <- 'terminal'
+  #grp[nrow(grp),] <- 'terminal'
   colnames(nod) <- names(node$node[[1]])
   rownames(nod) <- paste("level: ", rownames(nod))
   nod <- data.frame(cbind(nod, grp))

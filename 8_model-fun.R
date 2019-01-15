@@ -265,14 +265,15 @@ cumpaste <- function(vec, collps = NULL){
 
 fix_plan <- function(plan){
   he_fx <- function(pp){
+    require(stringr)
     str <- pp[[length(pp)]]
     spstr <- stringr::str_split(str, "&", simplify = TRUE)
     #print(spstr)
     final <- spstr[ncol(spstr)]
     if(stringr::str_detect(final, ">")){
-      final <- str_replace(final, ">", "<=")
+      final <- stringr::str_replace(final, ">", "<=")
     }else if(stringr::str_detect(final, "<=")){
-      final <- str_replace(final, "<=", ">")
+      final <- stringr::str_replace(final, "<=", ">")
     }
     spstr[ncol(spstr)] <- final
     pp_new <- c(pp, paste0(spstr, collapse = '&'))
@@ -283,12 +284,14 @@ fix_plan <- function(plan){
 
 make_plan <- function(candidates){
   plan <- lapply(candidates, cumpaste, collps = " & ")
-  plan <- fix_plan(plan)
   terminals <- lapply(plan, function(pp) pp[[length(pp)]])
-  terminals <- fix_plan(terminals)
+  print(terminals)
+  plan <- fix_plan(plan)
+  #terminals <- fix_plan(terminals)
   terminals <- do.call('c', terminals)
   plan <- do.call('c', plan)
   plan <- plan[!duplicated(plan)]
+  terminals <- terminals[!duplicated(terminals)]
   names(plan) <- NULL
   return(list('plan' = plan, 'terminal' = terminals))
 }

@@ -18,4 +18,5 @@ names(data) <- c("gva", "init", "emp_a", "emp_i", "inv_a", "inv_i")
 mdl <- lm(gva ~ init + emp_a + emp_i + inv_a + inv_i, data)
 summary(mdl)
 
-lmtree(gva ~  init | emp_a + emp_i + inv_a + inv_i, data = data)
+#lmtree(gva ~  init | emp_a + emp_i + inv_a + inv_i, data = data)
+plot(lmtree(gva ~  init | emp_a + emp_i + inv_a + inv_i, data = data))

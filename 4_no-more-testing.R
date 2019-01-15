@@ -1,4 +1,7 @@
+require(partykit)
+
 load("data/processed_data.Rdata")
+
 source("reg_tree/8_model-fun.R")
 
 data <- data.frame(
@@ -26,6 +29,11 @@ rownames(data) <- depvar_list$gdp_pc_gr$NUTS_ID
 tree <- get_nodes(data, 
                   split_vars = names(data)[3:ncol(data)], 
                   formula = "gdp_gr ~ gdp_init",
-                  max_steps = 5, n_splits = 100, min_obs = 50, verbose = TRUE)
+                  max_steps = 5, n_splits = 1000, min_obs = 50, verbose = TRUE)
 
 saveRDS(tree, "output/run.rds")
+
+plot(lmtree(gdp_gr ~  gdp_init | 
+              pop_den + inv_agr + inv_con + inv_ind + inv_mar + inv_nms + 
+              emp_agr + emp_con + emp_ind + emp_mar + emp_nms + thw_agr + 
+              thw_con + thw_ind + thw_mar + thw_nms, data = data))

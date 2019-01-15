@@ -9,22 +9,36 @@ output:
     theme: metropolis
 ---
 
-## Data
+```{r include=FALSE}
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
 
-- Wie und warum eingeschränkt (2000 onwards)
-- Welche Variablen & Länder
-- Hübscher Plot
+
+## Data Recap
+
+European Regional Database by Cambridge Econometrics
+
+We limit the dataset:
+
+- timeframe 2000-2015
+- no Croatia (i.e. two fewer NUTS2 regions)
+
+And use the full set of variables for our 270 regions.
+<!-- Insert boring plot -->
 
 
 ## Oh what a merry regression tree
 
 <!-- We try to split the observations into clubs akin to: -->
-- Split observations into clubs:
+Split observations into clubs:
 
 ```{r echo=TRUE, eval=FALSE}
 tree <- function(data, split_vars, end_criteria) {
   split <- find_best_split(...)
-  
   if (!end_criteria) {
     return(list(tree(split$data1, ...),
                 tree(split$data2, ...)))
@@ -37,24 +51,26 @@ tree <- function(data, split_vars, end_criteria) {
 ## Regression Tree
 
 <!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
-- Receive a tree-structure of data:
+We receive a recursive, tree-like data structure that is:
 
+- hard to deal with (**a lot** of helper functions are necessary)
+- nice
+
+\center
 <!-- Add pretty (?) tree, dummy ahead: -->
 ![](../pres1/tree.png){width=80%}
 
-<!-- Unfortunately we have to rely on spatially filtered data for this process, as there is no theoretically well-founded way of fitting spatial models to recursive subsets. -->
-- Caveat: linear model with spatially filtered data
-<!-- Mention fancy distance stuff -->
-
 ## Regression Tree
 
-- Tested with simulated and real data
-- Compares well against partykit [@hothorn15]
-<!-- Maybe show we did / it does -->
+Our results are comparable to partykit [@hothorn15].
+
+Still there's the caveat of spatially filtering the data.
+<!-- mention fancy distance stuff -->
+
 
 ## Results
 
-- Plot of clubs
+- club-plots
 - some first LM vs. SAR vs. SEM comparisons
 
 

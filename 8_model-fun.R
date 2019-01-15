@@ -95,17 +95,16 @@ get_nodes <- function(
   
   if(split$pval < pval && step < max_steps) {
     if(is.null(state)){
-      statex <- list(split)
+      state <- list(split)
     }else{
       state[[step + 1]] <- split
-      statex <- state
     }
     nodes <- splitter(df, split_var = split$name, split_val = split$value)
     stepx <- step + 1
     return(list(Recall(df = nodes$leq, split_vars, formula, predictors, 
-                          n_splits, min_obs, max_steps, step = stepx, verbose, pval = pval, state = statex), 
+                          n_splits, min_obs, max_steps, step = stepx, verbose, pval = pval, state = state), 
                 Recall(df = nodes$gre, split_vars, formula, predictors, 
-                          n_splits, min_obs, max_steps, step = stepx, verbose, pval = pval, state = statex)))
+                          n_splits, min_obs, max_steps, step = stepx, verbose, pval = pval, state = state)))
   } else {
     if(verbose) {
       # Prints reason and adds the split output
@@ -115,7 +114,7 @@ get_nodes <- function(
         cat("Encountered p-value of", split$pval, "\n")
       }
       if(step >= max_steps) cat("Maximum steps performed\n")
-      return(list(df = df, split = split, node = state))
+      return(list(df = df, node = state))
     } else {
       # Returns a plain df
       return(df)

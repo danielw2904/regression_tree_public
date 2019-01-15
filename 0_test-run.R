@@ -21,11 +21,9 @@ source("reg_tree/8_model-fun.R")
 
 tree <- get_nodes(data, 
                   split_vars = c("emp_a", "emp_i", "inv_a", "inv_i"), 
-                  formula = "gva ~ init", verbose = TRUE)
+                  formula = "gva ~ init", verbose = TRUE, min_obs = 20, max_steps = 5)
 
 saveRDS(tree, "output/test-run.rds")
-
-
 
 test_tree_data <- data.frame(gdp_gr = depvar_list$gdp_pc_gr$GDP_gr_0015,
                              gdp_init = depvar_list$gdp_pc$GDP_pc_2000,
@@ -56,8 +54,8 @@ rownames(test_tree_data) <- depvar_list$gdp_pc_gr$NUTS_ID
 w_tree <- get_nodes(test_tree_data, 
                     split_vars = names(test_tree_data)[3:ncol(test_tree_data)], 
                     formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,
-                    min_obs = 10, verbose = TRUE)
-plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
+                    min_obs = 50, verbose = TRUE)
+# plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
 
 
 

@@ -95,9 +95,10 @@ get_nodes <- function(
   
   if(split$pval < pval && step < max_steps) {
     if(is.null(state)){
-      statex <- split
+      statex <- list(split)
     }else{
-      statex <- list(state, split)
+      state[[step + 1]] <- split
+      statex <- state
     }
     nodes <- splitter(df, split_var = split$name, split_val = split$value)
     stepx <- step + 1

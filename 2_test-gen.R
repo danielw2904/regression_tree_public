@@ -44,14 +44,20 @@ source("reg_tree/8_model-fun.R")
 
 tree <- plant_tree(nodes, lm, formula = "Ytilde ~ X2 + X3")
 
+l2df <- function(l, ...){
+  return(data.frame(matrix(unlist(l), ...)))
+}
 
-print.node <- function(node, level){
+print.node <- function(node, level, grp){
   require(igraph)
-  indent_print(node$coefs$coefficients, .indent = ifelse(level == 1, "", paste0(paste0(rep("-", level), collapse = ''), "  ", collapse = '')))
-  nod <- data.frame(matrix(unlist(node$nodes), ncol = 3, byrow = TRUE))
+  #indent_print(node$coefs$coefficients, .indent = ifelse(level == 1, "", paste0(paste0(rep("-", level), collapse = ''), "  ", collapse = '')))
+  nod <- l2df(node$nodes, ncol = 3, byrow = TRUE)
+  grp <- l2df(grp, ncol = 1)
   colnames(nod) <- names(node$nodes[[1]])
   rownames(nod) <- paste("level: ", rownames(nod))
-  indent_print(nod, .indent = ifelse(level == 1, "", paste0(paste0(rep("-", level), collapse = ''), "  ", collapse='')))
+  nod <- cbind(nod, grp)
+  return(nod)
+  #indent_print(nod, .indent = ifelse(level == 1, "", paste0(paste0(rep("-", level), collapse = ''), "  ", collapse='')))
 }
 
 get_last <- function(node, level){
@@ -67,36 +73,47 @@ get_last <- function(node, level){
   return(ret)
 }
 
-summary.tree <- function(tree, level = 1){
+summary.tree <- function(tree, level = 1, grp = NULL){
   cat("\n")
   cat(ifelse(level == 1, "Root", paste("Split", level)))
   cat("\n\n")
   leq <- tree[[1]]
   gre <- tree[[2]]
   
+  if(is.null(grp)){
+    grpx <- "gre"
+  }else{
+    grpx <- list(grp, "gre")
+  }
+  if(is.null(grp)){
+    grpy <- "leq"
+  }else{
+    grpy <- list(grp, "leq")
+  }
+  
   term_leq <- !is.null(names(leq))
   term_gre <- !is.null(names(gre))
   if(term_leq & term_gre){
     cat("<= ", get_last(leq, level),'\n' )
-    print.node(leq, level)
+    print.node(leq, level, grp = grpy)
     cat("\n")
     cat("> ", get_last(gre, level),'\n' )
-    print.node(gre, level)
+    print.node(gre, level, grp = grpx)
   }else if(term_leq){
     cat("<= ", get_last(leq, level),'\n' )
-    print.node(leq, level)
+    print.node(leq, level, grp = grpy)
     cat('\n', "> ", get_last(leq, level),":")
     levelx <- level + 1
-    Recall(gre, level = levelx)
+    Recall(gre, level = levelx, grp = grpx)
   }else if(term_gre){
     cat("> ", get_last(gre, level),'\n' )
-    print.node(gre, level = level)
+    print.node(gre, level = level, grp = grpx)
     levelx <- level + 1
-    Recall(leq, level = levelx)
+    Recall(leq, level = levelx, grp = grpy)
   }else{
     levelx <- level + 1
-    return(list(Recall(leq, level = levelx), 
-                Recall(gre, level = levelx)))
+    return(list(Recall(leq, level = levelx, grp = grpy), 
+                Recall(gre, level = levelx, grp = grpx)))
   }
 }
 

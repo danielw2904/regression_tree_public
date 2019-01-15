@@ -24,3 +24,43 @@ tree <- get_nodes(data,
                   formula = "gva ~ init", verbose = TRUE)
 
 saveRDS(tree, "output/test-run.rds")
+
+
+
+test_tree_data <- data.frame(gdp_gr = depvar_list$gdp_pc_gr$GDP_gr_0015,
+                             gdp_init = depvar_list$gdp_pc$GDP_pc_2000,
+                             pop_den = split_list$pop_den$POP_den_2000,
+                             inv_agr = split_list$inv_agr$INV_agr_2000,
+                             inv_con = split_list$inv_con$INV_con_2000,
+                             inv_ind = split_list$inv_ind$INV_ind_2000,
+                             inv_mar = split_list$inv_mar$INV_mar_2000,
+                             inv_nms = split_list$inv_nms$INV_nms_2000,
+                             emp_agr = split_list$emp_agr$EMP_agr_2000,
+                             emp_con = split_list$emp_con$EMP_con_2000,
+                             emp_ind = split_list$emp_ind$EMP_ind_2000,
+                             emp_mar = split_list$emp_mar$EMP_mar_2000,
+                             emp_nms = split_list$emp_nms$EMP_nms_2000,
+                             thw_agr = split_list$thw_agr$THW_agr_2000,
+                             thw_con = split_list$thw_con$THW_con_2000,
+                             thw_ind = split_list$thw_ind$THW_ind_2000,
+                             thw_mar = split_list$thw_mar$THW_mar_2000,
+                             thw_nms = split_list$thw_nms$THW_nms_2000)
+
+rownames(test_tree_data) <- depvar_list$gdp_pc_gr$NUTS_ID
+
+# for(i in names(test_tree_data[2:length(names(test_tree_data))])){
+#   val <- sum(!(split_list[[i]]$NUTS_ID == rownames(test_tree_data)))
+#   print(val)
+# }
+
+w_tree <- get_nodes(test_tree_data, 
+                    split_vars = names(test_tree_data)[3:ncol(test_tree_data)], 
+                    formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,
+                    min_obs = 10, verbose = TRUE)
+plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
+
+
+
+
+
+

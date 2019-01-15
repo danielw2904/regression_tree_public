@@ -164,11 +164,10 @@ node_summary <- function(node, grp){
   #print(nod)
   grp <- l2df(grp, ncol = 1)
   colnames(grp) <- 'direction'
-  grp[nrow(grp),] <- 'terminal'
+  #grp[nrow(grp),] <- 'terminal'
   colnames(nod) <- names(node$node[[1]])
   rownames(nod) <- paste("level: ", rownames(nod))
   nod <- data.frame(cbind(nod, grp))
-  
   return(nod)
 }
 
@@ -191,16 +190,19 @@ simplify_nodes <- function(nodes, level = 1, grp = NULL){
   term_gre <- !is.null(names(gre))
   
   if(term_leq & term_gre){
-    node_summary(leq, grp = grpy)
-    node_summary(gre, grp = grpx)
+    return(list(
+    node_summary(leq, grp = grpy),
+    node_summary(gre, grp = grpx)))
   }else if(term_leq){
-    node_summary(leq, grp = grpy)
     levelx <- level + 1
-    Recall(gre, level = levelx, grp = grpx)
+    return(list(
+    node_summary(leq, grp = grpy),
+    Recall(gre, level = levelx, grp = grpx)))
   }else if(term_gre){
-    node_summary(gre, grp = grpx)
     levelx <- level + 1
-    Recall(leq, level = levelx, grp = grpy)
+    return(list(
+    node_summary(gre, grp = grpx),
+    Recall(leq, level = levelx, grp = grpy)))
   }else{
     levelx <- level + 1
     return(list(Recall(leq, level = levelx, grp = grpy), 

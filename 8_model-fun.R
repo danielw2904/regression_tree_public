@@ -156,6 +156,145 @@ plant_tree <- function(nodes, fun = lm, formula, ...){
 }
 
 
+l2df <- function(l, ...){
+  return(data.frame(matrix(unlist(l), ...), stringsAsFactors = FALSE))
+}
 
+node_summary <- function(node, grp){
+  nod <- l2df(node$node, ncol = 3, byrow=TRUE)
+  #print(nod)
+  grp <- l2df(grp, ncol = 1)
+  colnames(grp) <- 'direction'
+  grp[nrow(grp),] <- 'terminal'
+  colnames(nod) <- names(node$node[[1]])
+  rownames(nod) <- paste("level: ", rownames(nod))
+  nod <- data.frame(cbind(nod, grp))
+  
+  return(nod)
+}
+
+simplify_nodes <- function(nodes, level = 1, grp = NULL){
+  leq <- nodes[[1]]
+  gre <- nodes[[2]]
+  
+  if(is.null(grp)){
+    grpx <- "gre"
+  }else{
+    grpx <- list(grp, "gre")
+  }
+  if(is.null(grp)){
+    grpy <- "leq"
+  }else{
+    grpy <- list(grp, "leq")
+  }
+  
+  term_leq <- !is.null(names(leq))
+  term_gre <- !is.null(names(gre))
+  
+  if(term_leq & term_gre){
+    node_summary(leq, grp = grpy)
+    node_summary(gre, grp = grpx)
+  }else if(term_leq){
+    node_summary(leq, grp = grpy)
+    levelx <- level + 1
+    Recall(gre, level = levelx, grp = grpx)
+  }else if(term_gre){
+    node_summary(gre, grp = grpx)
+    levelx <- level + 1
+    Recall(leq, level = levelx, grp = grpy)
+  }else{
+    levelx <- level + 1
+    return(list(Recall(leq, level = levelx, grp = grpy), 
+                Recall(gre, level = levelx, grp = grpx)))
+  }
+}
+
+untree <- function(nodes, simplify = FALSE){
+  out <- list()
+  lumberjack <- function(nodes){
+    leq <- nodes[[1]]
+    gre <- nodes[[2]]
+    term_leq <- !is.null(names(leq))
+    term_gre <- !is.null(names(gre))
+    parent <- parent.frame()
+    pos <- length(parent$out) + 1
+    if(term_leq & term_gre){
+      parent$out[[pos]] <- leq
+      parent$out[[pos + 1]] <- gre
+      print('both')
+    }else if(term_leq){
+      parent$out[[pos]] <- leq
+      Recall(gre)
+      print('leq')
+    }else if(term_gre){
+      parent$out[[pos]] <- gre
+      Recall(leq)
+      print("gre")
+    }else{
+      print('none')
+      Recall(leq)
+      Recall(gre)
+    }
+  }
+  lumberjack(nodes)
+  if(simplify){
+    out <- do.call("rbind", out)
+  }
+  return(out)
+}
+
+make_candidates <- function(nodes){
+  plan_node <- function(node){
+    combine_node <- function(node_row){
+      dir <- ifelse(node_row[4] == 'leq', '<=', '>')
+      condition <- paste(node_row[2], dir, node_row[3], collapse = '')
+      return(condition)
+    }
+    apply(node, 1, combine_node)
+  }
+  plan <- lapply(nodes, plan_node)
+  print(plan)
+  return(plan)
+}
+
+# Helper
+cumpaste <- function(vec, collps = NULL){
+  return(sapply(vec, function(x)paste(vec[1:which(vec == x)], collapse = collps)))
+}
+
+fix_plan <- function(plan){
+  he_fx <- function(pp){
+    str <- pp[[length(pp)]]
+    spstr <- stringr::str_split(str, "&", simplify = TRUE)
+    #print(spstr)
+    final <- spstr[ncol(spstr)]
+    if(stringr::str_detect(final, ">")){
+      final <- str_replace(final, ">", "<=")
+    }else if(stringr::str_detect(final, "<=")){
+      final <- str_replace(final, "<=", ">")
+    }
+    spstr[ncol(spstr)] <- final
+    pp_new <- c(pp, paste0(spstr, collapse = '&'))
+    return(pp_new)
+  }
+  return(lapply(plan, function(x) he_fx(x)))
+}
+
+make_plan <- function(candidates){
+  plan <- do.call('c', lapply(candidates, cumpaste, collps = " & "))
+  plan <- fix_plan(plan)
+  plan <- do.call('c', plan)
+  plan <- plan[!duplicated(plan)]
+  return(plan)
+}
+
+get_data <- function(data, plan){
+  split_data  <- lapply(plan, function(cond) subset(data, eval(parse(text = cond))))
+  names(split_data) <- paste0("df", 1:length(plan))
+  for(pp in seq_along(plan)){
+    attr(split_data[[pp]], which = "split") <- plan[[pp]]
+  }
+  return(split_data)
+}
 # E.g. run:
 # tree <- get_nodes(df, split_vars, formula, verbose = TRUE)

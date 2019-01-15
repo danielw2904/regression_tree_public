@@ -33,7 +33,11 @@ tree <- get_nodes(data,
 
 saveRDS(tree, "output/run.rds")
 
+# compare with partykit
 plot(lmtree(gdp_gr ~  gdp_init | 
               pop_den + inv_agr + inv_con + inv_ind + inv_mar + inv_nms + 
               emp_agr + emp_con + emp_ind + emp_mar + emp_nms + thw_agr + 
               thw_con + thw_ind + thw_mar + thw_nms, data = data))
+# close enough!
+
+# To-do: filter (SAR & SEM)

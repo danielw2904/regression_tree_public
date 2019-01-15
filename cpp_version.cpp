@@ -1,18 +1,8 @@
 #include <RcppArmadillo.h>
-#include <iostream>
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::plugins(cpp11)]]
 using namespace Rcpp;
 using namespace arma;
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
 
 // [[Rcpp::export]]
 NumericVector get_var_stat(arma::rowvec y, arma::mat X, arma::vec Z, double min_obs){
@@ -21,7 +11,6 @@ NumericVector get_var_stat(arma::rowvec y, arma::mat X, arma::vec Z, double min_
   int i;
   int nn = X.n_cols - 1;
   for(i = 0; i<num_vals; i++){
-    //arma::uvec leq_i, gre_i;
     arma::colvec coef_gre, coef_leq, resid_gre, resid_leq;
     arma::colvec diff;
     arma::mat vcov_gre, vcov_leq;

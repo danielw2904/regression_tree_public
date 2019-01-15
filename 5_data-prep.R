@@ -207,7 +207,7 @@ split_list <- list(pop_den = pop_den,
                    inv_agr = inv_agr, inv_con = inv_con, inv_ind = inv_ind, 
                    inv_mar = inv_mar, inv_nms = inv_nms, 
                    emp_agr = emp_agr, emp_con = emp_con, emp_ind = emp_ind, 
-                   emp_mar = emp_mar, emp = emp_nms, 
+                   emp_mar = emp_mar, emp_nms = emp_nms, 
                    thw_agr = thw_agr, thw_con = thw_con, thw_ind = thw_ind, 
                    thw_mar = thw_mar, thw_nms = thw_nms)
 split_list <- lapply(split_list, function(x) x[match(poly_nuts, x$NUTS_ID), ])

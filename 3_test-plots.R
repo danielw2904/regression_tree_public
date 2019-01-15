@@ -6,8 +6,40 @@ library(dplyr)
 library(rgeos)
 
 
-poly_ggplot <- gBuffer(poly, byid=TRUE, width=0)
-poly_ggplot <- fortify(poly_ggplot, region="NUTS_ID")
+poly_ggplot <- gBuffer(poly, byid = TRUE, width = 0)
+poly_ggplot$ovw <- substr(poly_ggplot$NUTS_ID, 1, 2)
+poly_ggplot_ovw <- fortify(poly_ggplot, region = "ovw")
+poly_ggplot <- fortify(poly_ggplot, region = "NUTS_ID")
+
+
+poly_plot_ovw <- poly_ggplot
+poly_plot_ovw$Country <- as.factor(substr(poly_ggplot$id, 1, 2))
+
+p_ovw <- ggplot() + 
+  geom_polygon(data = poly_plot_ovw, 
+               aes(fill = Country, x = long, y = lat, group = group)) +
+  geom_path(data = poly_ggplot_ovw, aes(x = long, y = lat, group = group), 
+            color = "black", size = 0.1) + 
+#  geom_path(data = poly_ggplot_ovw, aes(x = long, y = lat, group = group), 
+#            color = 'red', size = 0.25) +
+  coord_equal() + 
+  labs(x = NULL, y = NULL) + 
+  theme(axis.line = element_blank(), 
+        axis.text.x = element_blank(), axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(legend.position = "bottom", legend.justification = "center", 
+        legend.direction = "horizontal", 
+        legend.background = element_rect(fill="transparent"), 
+        legend.title = element_blank()) + 
+  guides(fill = guide_legend(nrow = 2,byrow = TRUE))
+
+
+
+
+
 
 gdp_pc <- depvar_list$gdp_pc
 
@@ -223,6 +255,87 @@ for(i in 1:length(plot_names)){
 #      poly_plot_gva_gr, gva_gr_plot_list, 
 #      file = "./data/plots.Rda")
 #####
+
+
+
+
+
+
+
+
+
+
+poly_plot_clubs_lm <- left_join(poly_ggplot, 
+                                out_data[,c("NUTS_ID", "clubs")], 
+                                by = c("id" = "NUTS_ID"))
+
+p_clubs_lm <- ggplot() + 
+  geom_polygon(data = poly_plot_clubs_lm, 
+               aes(fill = clubs, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs_lm, aes(x = long, y = lat, group = group), 
+            color = "black", size = 0.1) + 
+  coord_equal() + 
+  labs(x = NULL, y = NULL) + 
+  theme(axis.line = element_blank(), 
+        axis.text.x = element_blank(), axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(legend.position = "bottom", legend.justification = "center", 
+        legend.direction = "horizontal", 
+        legend.background = element_rect(fill="transparent"), 
+        legend.title = element_blank()) + 
+  guides(fill = guide_legend(nrow = 2,byrow = TRUE))
+
+
+
+poly_plot_clubs_sar <- left_join(poly_ggplot, 
+                                 out_data[,c("NUTS_ID", "clubs")], 
+                                 by = c("id" = "NUTS_ID"))
+
+p_clubs_sar <- ggplot() + 
+  geom_polygon(data = poly_plot_clubs_sar, 
+               aes(fill = clubs, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs_sar, aes(x = long, y = lat, group = group), 
+            color = "black", size = 0.1) + 
+  coord_equal() + 
+  labs(x = NULL, y = NULL) + 
+  theme(axis.line = element_blank(), 
+        axis.text.x = element_blank(), axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(legend.position = "bottom", legend.justification = "center", 
+        legend.direction = "horizontal", 
+        legend.background = element_rect(fill="transparent"), 
+        legend.title = element_blank()) + 
+  guides(fill = guide_legend(nrow = 2,byrow = TRUE))
+
+
+poly_plot_clubs_sem <- left_join(poly_ggplot, 
+                                 out_data[,c("NUTS_ID", "clubs")], 
+                                 by = c("id" = "NUTS_ID"))
+
+p_clubs_sem <- ggplot() + 
+  geom_polygon(data = poly_plot_clubs_sem, 
+               aes(fill = clubs, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs_sem, aes(x = long, y = lat, group = group), 
+            color = "black", size = 0.1) + 
+  coord_equal() + 
+  labs(x = NULL, y = NULL) + 
+  theme(axis.line = element_blank(), 
+        axis.text.x = element_blank(), axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(legend.position = "bottom", legend.justification = "center", 
+        legend.direction = "horizontal", 
+        legend.background = element_rect(fill="transparent"), 
+        legend.title = element_blank()) + 
+  guides(fill = guide_legend(nrow = 2,byrow = TRUE))
 
 
 

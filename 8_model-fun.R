@@ -222,17 +222,17 @@ untree <- function(nodes, simplify = FALSE){
     if(term_leq & term_gre){
       parent$out[[pos]] <- leq
       parent$out[[pos + 1]] <- gre
-      print('both')
+      #print('both')
     }else if(term_leq){
       parent$out[[pos]] <- leq
       Recall(gre)
-      print('leq')
+      #print('leq')
     }else if(term_gre){
       parent$out[[pos]] <- gre
       Recall(leq)
-      print("gre")
+      #print("gre")
     }else{
-      print('none')
+      #print('none')
       Recall(leq)
       Recall(gre)
     }
@@ -284,7 +284,7 @@ fix_plan <- function(plan){
 make_plan <- function(candidates){
   plan <- lapply(candidates, cumpaste, collps = " & ")
   terminals <- lapply(plan, function(pp) pp[[length(pp)]])
-  print(terminals)
+  #print(terminals)
   plan <- fix_plan(plan)
   #terminals <- fix_plan(terminals)
   terminals <- do.call('c', terminals)
@@ -302,6 +302,15 @@ get_data <- function(data, plan){
     attr(split_data[[pp]], which = "split") <- plan[[pp]]
   }
   return(split_data)
+}
+
+nodes2dfs <- function(nodes){
+  simp <- simplify_nodes(nodes)
+  untr <- untree(simp)
+  cand <- make_candidates(untr)
+  plan <- make_plan(cand)
+  splt_data <- get_data(test_tree_data, plan$terminal)
+  return(splt_data)
 }
 # E.g. run:
 # tree <- get_nodes(df, split_vars, formula, verbose = TRUE)

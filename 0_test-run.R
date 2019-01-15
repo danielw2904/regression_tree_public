@@ -57,12 +57,9 @@ w_tree <- get_nodes(test_tree_data,
                     min_obs = 50, verbose = TRUE)
 
 
-node_summary(w_tree[[1]], 'leq')
-simp <- simplify_nodes(w_tree)
-untr <- untree(simp)
-cand <- make_candidates(untr)
-plan <- make_plan(cand)
-plan
+#node_summary(w_tree[[1]], 'leq')
+
+splt_data <- nodes2dfs(w_tree)
 
 plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
                     formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,

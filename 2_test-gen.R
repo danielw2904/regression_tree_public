@@ -1,4 +1,4 @@
-n <- 500
+n <- 1000
 W <- matrix(rgamma(n^2, shape = 10, 10),  nrow = n, ncol = n)
 W[lower.tri(W)] <- 0
 W <- W %*% t(W)
@@ -13,9 +13,9 @@ row_stdz <- function(W){
 (W <- row_stdz(W))
 set.seed(123)
 X <- cbind( 1, rnorm(n), rnorm(n) )
-Z1 <- sample(1:10, n, replace = TRUE)
-Z2 <- sample(1:10, n, replace = TRUE)
-Z3 <- sample(1:10, n, replace = TRUE)
+Z1 <- rnorm(n, 0, 100)
+Z2 <- rnorm(n, 0, 100)
+Z3 <- rnorm(n, 0, 100)
 RHO = -.5
 BETA <- c(5, -2 , 2.5)
 SIGMA = 0.03
@@ -38,8 +38,30 @@ reg_df$Ytilde <- reg_df$Y - coef(mod_filter)[1] * W %*% reg_df$Y
 summary(mod_true)
 
 source("reg_tree/8_model-fun.R")
-nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2"), 
-          formula = "Ytilde ~ X2 + X3", verbose = TRUE, max_steps = 10, min_obs = 20, pval = 0.001)
+nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
+                   formula = "Ytilde ~ X2 + X3", verbose = TRUE, 
+                   max_steps = 10, min_obs = 20, pval = 0.001, cpp = FALSE)
+library(microbenchmark)
+# Unit: seconds
+# expr
+# get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), formula = "Ytilde ~ X2 + X3",      verbose = TRUE, n_splits = nrow(reg_df), max_steps = 10,      min_obs = 20, pval = 0.001, cpp = FALSE)
+#   min       lq     mean     median       uq      max      neval
+# 62.64016 63.13553 63.24686 63.27059 63.46811 64.00353    10
+#microbenchmark(get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
+#          formula = "Ytilde ~ X2 + X3", verbose = TRUE, n_splits = nrow(reg_df),
+#          max_steps = 10, min_obs = 20, pval = 0.001, cpp = FALSE), times = 10)
+# Unit: seconds
+# expr
+# get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), formula = "Ytilde ~ X2 + X3",      verbose = TRUE, n_splits = nrow(reg_df), max_steps = 10,      min_obs = 20, pval = 0.001, cpp = TRUE)
+# min       lq     mean   median       uq      max neval
+# 58.0226 58.20946 59.38295 59.14392 60.23289 61.32172    10
+# microbenchmark(get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
+#                        formula = "Ytilde ~ X2 + X3", verbose = TRUE, n_splits = nrow(reg_df),
+#                        max_steps = 10, min_obs = 20, pval = 0.001, cpp = TRUE), times = 10)
+# 
+microbenchmark(get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
+                        formula = "Ytilde ~ X2 + X3", verbose = TRUE, n_splits = nrow(reg_df),
+                         max_steps = 10, min_obs = 20, pval = 0.001, cpp = TRUE), times = 2)
 
 simnodes <- simplify_nodes(nodes)
 unnodes <- untree(simnodes, FALSE)

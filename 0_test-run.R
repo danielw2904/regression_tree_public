@@ -61,8 +61,7 @@ w_tree <- get_nodes(test_tree_data,
 
 splt_data <- nodes2dfs(w_tree)
 
-plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
-                    formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,
+plant_tree(w_tree, formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,
                     min_obs = 50, verbose = TRUE)
 # plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
 

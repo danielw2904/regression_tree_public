@@ -37,18 +37,32 @@ obj_fun <- function(model_list) {
   return(list(stat = stat, p_val = pval))
 }
 
+Rcpp::sourceCpp("reg_tree/cpp_version.cpp")
+
+
 # Takes in df & looks for nice splits, returns the best
 find_split <- function(
   df, split_vars, formula, 
   fun = lm, predictors = 3, 
-  min_obs = 3, n_splits = 10, ...) {
-  
+  min_obs = 3, n_splits = 10, cpp_sp, ...) {
+
   best_vals <- matrix(NA, nrow = length(split_vars), ncol = 2)
   rownames(best_vals) <- split_vars
   colnames(best_vals) <- c("var_value", "chisq_value")
-
+  if(cpp_sp){
+    yvar <- all.vars(as.formula(formula), df)[1]
+    ycpp <- as.matrix(df[yvar], ncol = 1)
+    Xcpp <- model.matrix(as.formula(formula), df)
+  }
   j <- 1
   for(var in split_vars) {
+    if(cpp_sp){
+      
+      Zcpp <- as.matrix(df[var], ncol = 1)
+
+      split_vals <- as.vector(Zcpp)
+      var_stat <- get_var_stat(y = ycpp, X = Xcpp, Z = Zcpp, min_obs = min_obs)
+    }else{
     var_stat <- vector("double", length = length(split_vars))
     i <- 1
     split_vals <- seq(min(df[[var]]), max(df[[var]]), length.out = n_splits)
@@ -62,6 +76,7 @@ find_split <- function(
       }
       i <- i + 1
     } # for(z in split_vals)
+    } # else of cpp
     if(all(is.na(var_stat))) {
       best_vals[j, 1] <- NA
       best_vals[j, 2] <- NA
@@ -89,9 +104,10 @@ find_split <- function(
 get_nodes <- function(
   df, split_vars, formula, predictors = 3, 
   n_splits = 10, min_obs = 3, max_steps = 4, pval = 0.05,
-  step = 0, verbose = FALSE, state = NULL, ...) {
+  step = 0, verbose = FALSE, state = NULL, cpp = FALSE, ...) {
   
-  split <- find_split(df, split_vars, formula, fun = lm, predictors, min_obs, n_splits, ...)
+  split <- find_split(df, split_vars, formula, fun = lm, 
+                      predictors, min_obs, n_splits, cpp_sp = cpp, ...)
   
   if(split$pval < pval && step < max_steps) {
     if(is.null(state)){

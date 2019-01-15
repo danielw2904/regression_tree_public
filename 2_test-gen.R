@@ -38,15 +38,132 @@ reg_df$Ytilde <- reg_df$Y - coef(mod_filter)[1] * W %*% reg_df$Y
 summary(mod_true)
 
 source("reg_tree/8_model-fun.R")
-(nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2"), 
+(nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
           formula = "Ytilde ~ X2 + X3", verbose = TRUE, max_steps = 10, min_obs = 20, pval = 0.001))
+
+l2df <- function(l, ...){
+  return(data.frame(matrix(unlist(l), ...), stringsAsFactors = FALSE))
+}
+
+node_summary <- function(node, grp){
+  nod <- l2df(node$node, ncol = 3, byrow=TRUE)
+  #print(nod)
+  grp <- l2df(grp, ncol = 1)
+  colnames(grp) <- 'direction'
+  grp[nrow(grp),] <- 'terminal'
+  colnames(nod) <- names(node$node[[1]])
+  rownames(nod) <- paste("level: ", rownames(nod))
+  nod <- data.frame(cbind(nod, grp))
+  
+  return(nod)
+}
+
+simplify_nodes <- function(nodes, level = 1, grp = NULL){
+  leq <- nodes[[1]]
+  gre <- nodes[[2]]
+  
+  if(is.null(grp)){
+    grpx <- "gre"
+  }else{
+    grpx <- list(grp, "gre")
+  }
+  if(is.null(grp)){
+    grpy <- "leq"
+  }else{
+    grpy <- list(grp, "leq")
+  }
+  
+  term_leq <- !is.null(names(leq))
+  term_gre <- !is.null(names(gre))
+  
+  if(term_leq & term_gre){
+    node_summary(leq, grp = grpy)
+    node_summary(gre, grp = grpx)
+  }else if(term_leq){
+    node_summary(leq, grp = grpy)
+    levelx <- level + 1
+    Recall(gre, level = levelx, grp = grpx)
+  }else if(term_gre){
+    node_summary(gre, grp = grpx)
+    levelx <- level + 1
+    Recall(leq, level = levelx, grp = grpy)
+  }else{
+    levelx <- level + 1
+    return(list(Recall(leq, level = levelx, grp = grpy), 
+                Recall(gre, level = levelx, grp = grpx)))
+  }
+}
+untree <- function(nodes, simplify = FALSE){
+  out <- list()
+  lumberjack <- function(nodes){
+    leq <- nodes[[1]]
+    gre <- nodes[[2]]
+    term_leq <- !is.null(names(leq))
+    term_gre <- !is.null(names(gre))
+    parent <- parent.frame()
+    pos <- length(parent$out) + 1
+    if(term_leq & term_gre){
+      parent$out[[pos]] <- leq
+      parent$out[[pos + 1]] <- gre
+      print('both')
+    }else if(term_leq){
+      parent$out[[pos]] <- leq
+      Recall(gre)
+      print('leq')
+    }else if(term_gre){
+      parent$out[[pos]] <- gre
+      Recall(leq)
+      print("gre")
+    }else{
+      print('none')
+      Recall(leq)
+      Recall(gre)
+    }
+  }
+  lumberjack(nodes)
+  if(simplify){
+    out <- do.call("rbind", out)
+  }
+  return(out)
+}
+
+simnodes <- simplify_nodes(nodes)
+unnodes <- untree(simnodes, FALSE)
+
+make_plan <- function(nodes){
+  require(stringr)
+  plan_node <- function(node){
+    combine_node <- function(node_row){
+      dir <- ifelse(node_row[4] == 'leq', '<=', '>')
+      condition <- paste(node_row[2], dir, node_row[3], collapse = '')
+      return(condition)
+    }
+    apply(node, 1, combine_node)
+  }
+  plan <- lapply(nodes, plan_node)
+  print(plan)
+  return(plan)
+}
+
+add_terminal <- function(plan){
+  plan <- rbind(plan, stringr::str_replace(plan[nrow(plan),], ">", "<="))
+  return(plan)
+}
+
+
+plantt <- make_plan(unnodes)
+
+cumpaste <- function(vec){
+  sapply(vec, function(x)paste(vec[1:which(vec == x)], collapse = ' & '))
+  
+}
+cumpaste(plantt[[1]])
+
 
 
 tree <- plant_tree(nodes, lm, formula = "Ytilde ~ X2 + X3")
 
-l2df <- function(l, ...){
-  return(data.frame(matrix(unlist(l), ...)))
-}
+
 
 print.node <- function(node, level, grp){
   require(igraph)
@@ -120,5 +237,5 @@ summary.tree <- function(tree, level = 1, grp = NULL){
 summary.tree(tree)
 
 library(partykit)
-lmtree(Ytilde ~ X2 + X3 | Z1 + Z2, data = reg_df, minsize = 30)
+lmtree(Ytilde ~ X2 + X3 | Z1 + Z2 + Z3, data = reg_df, minsize = 30)
 

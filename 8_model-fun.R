@@ -253,7 +253,6 @@ make_candidates <- function(nodes){
     apply(node, 1, combine_node)
   }
   plan <- lapply(nodes, plan_node)
-  print(plan)
   return(plan)
 }
 
@@ -281,11 +280,15 @@ fix_plan <- function(plan){
 }
 
 make_plan <- function(candidates){
-  plan <- do.call('c', lapply(candidates, cumpaste, collps = " & "))
+  plan <- lapply(candidates, cumpaste, collps = " & ")
   plan <- fix_plan(plan)
+  terminals <- lapply(plan, function(pp) pp[[length(pp)]])
+  terminals <- fix_plan(terminals)
+  terminals <- do.call('c', terminals)
   plan <- do.call('c', plan)
   plan <- plan[!duplicated(plan)]
-  return(plan)
+  names(plan) <- NULL
+  return(list('plan' = plan, 'terminal' = terminals))
 }
 
 get_data <- function(data, plan){

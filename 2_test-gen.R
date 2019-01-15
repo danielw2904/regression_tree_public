@@ -44,8 +44,11 @@ nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2"),
 simnodes <- simplify_nodes(nodes)
 unnodes <- untree(simnodes, FALSE)
 plantt <- make_candidates(unnodes)
-(reg_plan <- make_plan(plantt))
-dat_split <- get_data(reg_df, reg_plan)
+reg_plan <- make_plan(plantt)
+dat_split <- get_data(reg_df, reg_plan$plan)
+
+dat_split
+
 
 tree <- plant_tree(nodes, lm, formula = "Ytilde ~ X2 + X3")
 

@@ -5,7 +5,7 @@ using namespace Rcpp;
 using namespace arma;
 
 // [[Rcpp::export]]
-NumericVector get_var_stat(arma::rowvec y, arma::mat X, arma::vec Z, double min_obs){
+NumericVector get_var_stat(arma::rowvec & y, arma::mat & X, arma::vec & Z, double min_obs){
   int num_vals = Z.size();
   NumericVector var_stat(num_vals);
   int i;

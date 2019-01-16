@@ -37,8 +37,8 @@ obj_fun <- function(model_list) {
   return(list(stat = stat, p_val = pval))
 }
 
+# Source Cpp version
 Rcpp::sourceCpp("reg_tree/cpp_version.cpp")
-
 
 # Takes in df & looks for nice splits, returns the best
 find_split <- function(

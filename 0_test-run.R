@@ -53,7 +53,8 @@ rownames(test_tree_data) <- depvar_list$gdp_pc_gr$NUTS_ID
 
 w_tree <- get_nodes(test_tree_data, 
                     split_vars = names(test_tree_data)[3:ncol(test_tree_data)], 
-                    formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 1000, cpp = TRUE,
+                    formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 1000, cpp = FALSE, 
+                    penalty = TRUE, pmult = 1000, distmat = dist,
                     min_obs = 50, verbose = TRUE)
 
 

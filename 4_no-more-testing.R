@@ -69,11 +69,70 @@ tree_sem <- get_nodes(data,
                       max_steps = 5, n_splits = 1000, min_obs = 50, 
                       verbose = TRUE)
 
-save(tree_lm, tree_sar, tree_sem, file = "./output/run.Rda")
+sim_nodes_lm <- simplify_nodes(tree_lm)
+sim_nodes_lm <- untree(sim_nodes_lm)
+cand_lm <- make_candidates(sim_nodes_lm)
+plan_lm <- make_plan(cand_lm)
+terminal_lm <- get_data(data, plan_lm$terminal)
+
+sim_nodes_sar <- simplify_nodes(tree_sar)
+sim_nodes_sar <- untree(sim_nodes_sar)
+cand_sar <- make_candidates(sim_nodes_sar)
+plan_sar <- make_plan(cand_sar)
+terminal_sar <- get_data(data, plan_sar$terminal)
+
+sim_nodes_sem <- simplify_nodes(tree_sem)
+sim_nodes_sem <- untree(sim_nodes_sem)
+cand_sem <- make_candidates(sim_nodes_sem)
+plan_sem <- make_plan(cand_sem)
+terminal_sem <- get_data(data, plan_sem$terminal)
+
+
+
+data$clubs_lm <- NA
+for(i in 1:length(terminal_lm)){
+  name_temp <- rownames(terminal_lm[[i]])
+  data[which(rownames(data) %in% name_temp) , "clubs_lm"] <- paste("Club", i)
+}
+data$clubs_lm <- as.factor(data$clubs_lm)
+
+
+data$clubs_sar <- NA
+for(i in 1:length(terminal_sar)){
+  name_temp <- rownames(terminal_sar[[i]])
+  data[which(rownames(data) %in% name_temp) , "clubs_sar"] <- paste("Club", i)
+}
+data$clubs_sar <- as.factor(data$clubs_sar)
+
+
+data$clubs_sem <- NA
+for(i in 1:length(terminal_sem)){
+  name_temp <- rownames(terminal_sem[[i]])
+  data[which(rownames(data) %in% name_temp) , "clubs_sem"] <- paste("Club", i)
+}
+data$clubs_sem <- as.factor(data$clubs_sem)
+
+
+
+regs_lm <- lapply(terminal_lm, 
+                  function(x) lm(formula = "gdp_gr~gdp_init", data = x))
+regs_sar <- lapply(terminal_sar, 
+                   function(x) lm(formula = "gdp_gr_sar~gdp_init", data = x))
+regs_sem <- lapply(terminal_sem, 
+                   function(x) lm(formula = "gdp_gr_sem~gdp_init_sem", data = x))
+
+
+
+save(data, tree_lm, tree_sar, tree_sem,
+     regs_lm, regs_sar, regs_sem,
+     file = "./output/run.Rda")
+
+
 
 plot(lmtree(gdp_gr ~  gdp_init | 
               pop_den + inv_agr + inv_con + inv_ind + inv_mar + inv_nms + 
               emp_agr + emp_con + emp_ind + emp_mar + emp_nms + thw_agr + 
               thw_con + thw_ind + thw_mar + thw_nms, data = data))
+
 
 

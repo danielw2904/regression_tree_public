@@ -164,11 +164,10 @@ node_summary <- function(node, grp){
   #print(nod)
   grp <- l2df(grp, ncol = 1)
   colnames(grp) <- 'direction'
-  grp[nrow(grp),] <- 'terminal'
+  #grp[nrow(grp),] <- 'terminal'
   colnames(nod) <- names(node$node[[1]])
   rownames(nod) <- paste("level: ", rownames(nod))
   nod <- data.frame(cbind(nod, grp))
-  
   return(nod)
 }
 
@@ -191,16 +190,19 @@ simplify_nodes <- function(nodes, level = 1, grp = NULL){
   term_gre <- !is.null(names(gre))
   
   if(term_leq & term_gre){
-    node_summary(leq, grp = grpy)
-    node_summary(gre, grp = grpx)
+    return(list(
+    node_summary(leq, grp = grpy),
+    node_summary(gre, grp = grpx)))
   }else if(term_leq){
-    node_summary(leq, grp = grpy)
     levelx <- level + 1
-    Recall(gre, level = levelx, grp = grpx)
+    return(list(
+    node_summary(leq, grp = grpy),
+    Recall(gre, level = levelx, grp = grpx)))
   }else if(term_gre){
-    node_summary(gre, grp = grpx)
     levelx <- level + 1
-    Recall(leq, level = levelx, grp = grpy)
+    return(list(
+    node_summary(gre, grp = grpx),
+    Recall(leq, level = levelx, grp = grpy)))
   }else{
     levelx <- level + 1
     return(list(Recall(leq, level = levelx, grp = grpy), 
@@ -262,14 +264,15 @@ cumpaste <- function(vec, collps = NULL){
 
 fix_plan <- function(plan){
   he_fx <- function(pp){
+    require(stringr)
     str <- pp[[length(pp)]]
     spstr <- stringr::str_split(str, "&", simplify = TRUE)
     #print(spstr)
     final <- spstr[ncol(spstr)]
     if(stringr::str_detect(final, ">")){
-      final <- str_replace(final, ">", "<=")
+      final <- stringr::str_replace(final, ">", "<=")
     }else if(stringr::str_detect(final, "<=")){
-      final <- str_replace(final, "<=", ">")
+      final <- stringr::str_replace(final, "<=", ">")
     }
     spstr[ncol(spstr)] <- final
     pp_new <- c(pp, paste0(spstr, collapse = '&'))
@@ -280,12 +283,14 @@ fix_plan <- function(plan){
 
 make_plan <- function(candidates){
   plan <- lapply(candidates, cumpaste, collps = " & ")
-  plan <- fix_plan(plan)
   terminals <- lapply(plan, function(pp) pp[[length(pp)]])
-  terminals <- fix_plan(terminals)
+  print(terminals)
+  plan <- fix_plan(plan)
+  #terminals <- fix_plan(terminals)
   terminals <- do.call('c', terminals)
   plan <- do.call('c', plan)
   plan <- plan[!duplicated(plan)]
+  terminals <- terminals[!duplicated(terminals)]
   names(plan) <- NULL
   return(list('plan' = plan, 'terminal' = terminals))
 }

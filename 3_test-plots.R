@@ -27,9 +27,10 @@ p_ovw <- ggplot() +
   theme(axis.line = element_blank(), 
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
-        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+        axis.title.x = element_blank(),axis.title.y = element_blank(),
+        panel.background = element_blank()) + 
   scale_fill_viridis(option = "plasma", discrete = TRUE) + 
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
         legend.background = element_rect(fill="transparent"), 
@@ -85,7 +86,8 @@ for(i in 1:length(plot_names)){
     theme(axis.line = element_blank(), 
           axis.text.x=element_blank(), axis.text.y = element_blank(), 
           axis.ticks = element_blank(), 
-          axis.title.x = element_blank(), axis.title.y = element_blank()) + 
+          axis.title.x = element_blank(), axis.title.y = element_blank(),
+          panel.background = element_blank()) + 
     coord_equal() + 
     scale_fill_viridis(option = "plasma", direction = -1, discrete = TRUE) + 
     theme(legend.position = "none", legend.justification = c(0,1), 
@@ -135,7 +137,8 @@ for(i in 1:length(plot_names)){
     theme(axis.line = element_blank(), 
           axis.text.x=element_blank(), axis.text.y = element_blank(), 
           axis.ticks = element_blank(), 
-          axis.title.x = element_blank(), axis.title.y = element_blank()) + 
+          axis.title.x = element_blank(), axis.title.y = element_blank(),
+          panel.background = element_blank()) + 
     coord_equal() + 
     scale_fill_viridis(option = "plasma", direction = -1, discrete = TRUE) + 
     theme(legend.position = "none", legend.justification = c(0,1), 
@@ -260,53 +263,53 @@ for(i in 1:length(plot_names)){
 
 
 
+load("./output/run.Rda")
 
 
-
-
-
-poly_plot_clubs_lm <- left_join(poly_ggplot, 
-                                out_data[,c("NUTS_ID", "clubs")], 
-                                by = c("id" = "NUTS_ID"))
+poly_plot_clubs <- left_join(poly_ggplot, 
+                             cbind(rownames(data),
+                                   data[ , c("clubs_lm", "clubs_sar", "clubs_sem")]), 
+                             by = c("id" = "rownames(data)"))
 
 p_clubs_lm <- ggplot() + 
-  geom_polygon(data = poly_plot_clubs_lm, 
-               aes(fill = clubs, x = long, y = lat, group = group)) + 
-  geom_path(data = poly_plot_clubs_lm, aes(x = long, y = lat, group = group), 
+  geom_polygon(data = poly_plot_clubs, 
+               aes(fill = clubs_lm, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs, aes(x = long, y = lat, group = group), 
             color = "black", size = 0.1) + 
   coord_equal() + 
-  labs(x = NULL, y = NULL) + 
+  labs(x = NULL, y = NULL, 
+       title = "Convergence clubs NUTS 2", 
+       subtitle = "Unfiltered data") + 
   theme(axis.line = element_blank(), 
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
-        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+        axis.title.x = element_blank(), axis.title.y = element_blank(),
+        panel.background = element_blank()) + 
   scale_fill_viridis(option = "plasma", discrete = TRUE) + 
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
         legend.background = element_rect(fill="transparent"), 
         legend.title = element_blank()) + 
   guides(fill = guide_legend(nrow = 2,byrow = TRUE))
 
-
-
-poly_plot_clubs_sar <- left_join(poly_ggplot, 
-                                 out_data[,c("NUTS_ID", "clubs")], 
-                                 by = c("id" = "NUTS_ID"))
 
 p_clubs_sar <- ggplot() + 
-  geom_polygon(data = poly_plot_clubs_sar, 
-               aes(fill = clubs, x = long, y = lat, group = group)) + 
-  geom_path(data = poly_plot_clubs_sar, aes(x = long, y = lat, group = group), 
+  geom_polygon(data = poly_plot_clubs, 
+               aes(fill = clubs_sar, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs, aes(x = long, y = lat, group = group), 
             color = "black", size = 0.1) + 
   coord_equal() + 
-  labs(x = NULL, y = NULL) + 
+  labs(x = NULL, y = NULL, 
+       title = "Convergence clubs NUTS 2", 
+       subtitle = "SAR-filtered data") + 
   theme(axis.line = element_blank(), 
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
-        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
+        axis.title.x = element_blank(),axis.title.y = element_blank(),
+        panel.background = element_blank()) + 
   scale_fill_viridis(option = "plasma", discrete = TRUE) + 
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
         legend.background = element_rect(fill="transparent"), 
@@ -314,23 +317,22 @@ p_clubs_sar <- ggplot() +
   guides(fill = guide_legend(nrow = 2,byrow = TRUE))
 
 
-poly_plot_clubs_sem <- left_join(poly_ggplot, 
-                                 out_data[,c("NUTS_ID", "clubs")], 
-                                 by = c("id" = "NUTS_ID"))
-
 p_clubs_sem <- ggplot() + 
-  geom_polygon(data = poly_plot_clubs_sem, 
-               aes(fill = clubs, x = long, y = lat, group = group)) + 
-  geom_path(data = poly_plot_clubs_sem, aes(x = long, y = lat, group = group), 
+  geom_polygon(data = poly_plot_clubs, 
+               aes(fill = clubs_sem, x = long, y = lat, group = group)) + 
+  geom_path(data = poly_plot_clubs, aes(x = long, y = lat, group = group), 
             color = "black", size = 0.1) + 
   coord_equal() + 
-  labs(x = NULL, y = NULL) + 
+  labs(x = NULL, y = NULL, 
+       title = "Convergence clubs NUTS 2", 
+       subtitle = "SEM-filtered data") +
   theme(axis.line = element_blank(), 
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
-        axis.title.x = element_blank(),axis.title.y = element_blank()) + 
-  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+        axis.title.x = element_blank(), axis.title.y = element_blank(),
+        panel.background = element_blank()) + 
+  scale_fill_viridis(option = "viridis", discrete = TRUE) + 
+  theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
         legend.background = element_rect(fill="transparent"), 
@@ -340,7 +342,7 @@ p_clubs_sem <- ggplot() +
 
 
 save(poly_plot_gdp_pc, gdp_pc_plot_list, 
-     poly_plot_gdp_gr, gdp_gr_plot_list, 
+     poly_plot_gdp_gr, gdp_gr_plot_list,
+     poly_ggplot_ovw, p_ovw,
+     poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
      file = "./data/plots.Rda")
-
-

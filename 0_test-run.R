@@ -53,6 +53,18 @@ rownames(test_tree_data) <- depvar_list$gdp_pc_gr$NUTS_ID
 
 w_tree <- get_nodes(test_tree_data, 
                     split_vars = names(test_tree_data)[3:ncol(test_tree_data)], 
+                    formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 1000,
+                    min_obs = 50, verbose = TRUE)
+
+
+node_summary(w_tree[[1]], 'leq')
+simp <- simplify_nodes(w_tree)
+untr <- untree(simp)
+cand <- make_candidates(untr)
+plan <- make_plan(cand)
+plan
+
+plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")
                     formula = "gdp_gr ~ gdp_init", max_steps = 5, n_splits = 50,
                     min_obs = 50, verbose = TRUE)
 # plant_tree(w_tree, formula = "gdp_gr ~ gdp_init")

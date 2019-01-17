@@ -7,6 +7,7 @@ bibliography: refs.bibtex
 output: 
   beamer_presentation:
     theme: metropolis
+    colortheme: dove
 ---
 
 ```{r include=FALSE}
@@ -40,56 +41,6 @@ This means we get to:
 - use the full set of variables
 - keep a detailled London (five NUTS 2 regions)
 
-
-
-
-## Oh what a merry regression tree
-
-<!-- Remember regression trees: -->
-<!-- We try to split the observations into clubs that are similar to each other -->
-<!-- We do this with a recursive function akin to: -->
-<!-- Explain recursion + iteration -->
-Split observations into clubs:
-
-```{r echo=TRUE, eval=FALSE}
-tree <- function(data, split_vars, end_criteria) {
-  split <- find_best_split(...)
-  if (!end_criteria) {
-    return(list(tree(split$data1, ...),
-                tree(split$data2, ...)))
-  } else { # if(end_criteria)
-    return(data)
-  }
-}
-```
-
-<!-- Note that we supply different end criteria - minimum club size, maximum step size and insignificant splits -->
-<!-- Other stuff includes how to divide up the scale (easier due to logs), but later more on the implementation -->
-
-## Regression Tree
-
-<!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
-We receive a recursive, tree-like data structure that is:
-
-- hard to deal with (**a lot** of helper functions are necessary)
-- pretty nice
-
-
-
-<!-- Add pretty (?) tree, dummy ahead: -->
-\center
-![](../pres1/tree.png){width=80%}
-
-## Regression Tree
-
-Our results are comparable to partykit [@hothorn15].
-
-Still there's the caveat of spatially filtering the data.
-
-<!-- mention fancy distance stuff -->
-
-
-<!-- Lukas with results -->
 ## Motivation
 ```{r, echo=FALSE, fig.align='center'}
 grid.arrange(plot_gdp_pc, plot_gdp_gr, ncol = 2)
@@ -119,14 +70,12 @@ grid.arrange(p_clubs_sar, p_clubs_sem, ncol = 2)
 
 
 ## Results
-
 ```{r, echo=FALSE, results='asis'}
 stargazer(regs_sar, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq", "adj.rsq"),
           intercept.bottom = FALSE, title = "Regression results using SAR-filtered data",
           covariate.labels = c(NA, "Initial GDP p.c."), 
           dep.var.labels = "GDP p.c. growth rate 2000-15")
 ```
-
 
 
 ## Results
@@ -138,21 +87,67 @@ stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
 ```
 
 
-## Implementation I
+## CS excursion
+
+**Regression vs. Iteration**
+\vspace{1em}
+Fibonacci sequence: $1, 1, 2, 3, 5, 8, 13, 21, ...$
+
+Defined by $$f(n) = f(n-1) + f(n-2)$$
+with the base $$f(1) = f(2) = 1$$
+
+<!-- Remember regression trees: -->
+<!-- We try to split the observations into clubs that are similar to each other -->
+<!-- We do this with a recursive function akin to: -->
+<!-- Explain recursion + iteration -->
+
+
+## Regression tree
+
+Split observations into clubs:
+
+```{r echo=TRUE, eval=FALSE}
+tree <- function(data, split_vars, end_criteria) {
+  split <- find_best_split(...)
+  if (!end_criteria) {
+    return(list(tree(split$data1, ...),
+                tree(split$data2, ...)))
+  } else { # if(end_criteria)
+    return(data)
+  }
+}
+```
+
+<!-- Note that we supply different end criteria - minimum club size, maximum step size and insignificant splits -->
+<!-- Other stuff includes how to divide up the scale (easier due to logs), but later more on the implementation -->
+
+
+## Oh what a merry regression tree
+
+<!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
+We receive a recursive, tree-like data structure that is:
+
+- hard to deal with (**a lot** of helper functions are necessary)
+- pretty nice
+
+<!-- Add pretty (?) tree, dummy ahead: -->
+![A partykit [@hothorn15] tree](party_tree.png){width=90%}
+
+
+## Implementation
 
 1. Grow the tree
 
 \center
 ![](reg_tree_r.png){width=80%}
 
-## Implementation II
+## Implementation
 
 2. Fell the tree
-
 \center
 ![](simplified_nodes.png){width=80%}
 
-## Implementation II
+## Implementation
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 untree <- function(nodes, simplify = FALSE){
@@ -170,10 +165,9 @@ untree <- function(nodes, simplify = FALSE){
   lumberjack(nodes)
   return(out)
 }
-
 ```
 
-## Implementation III
+## Implementation
 
 3. Plan the furniture
 
@@ -187,7 +181,7 @@ cumPaste <- function(vec, collps = NULL){
 }
 ```
 
-## Implementation IV
+## Implementation
 
 4. Build the furniture
 
@@ -195,19 +189,17 @@ cumPaste <- function(vec, collps = NULL){
 \center
 ![](df_list.png)
 
-- ```lapply(dat, ...)``` desired regression function
+- `lapply(dat, ...)` desired regression function
 
 ## Computational concerns
 
 - Looping
-
-    - For each splitting variable
-        - For each value in variable
-    
+- For each splitting variable
+- For each value in variable
 - Rcpp [@dirk]
 
 1. Write function in C++
-```{c, eval = FALSE,echo = TRUE}
+```{c, eval = FALSE, echo = TRUE}
 // [[Rcpp::export]]
 NumericVector get_var_stat(arma::rowvec & y, 
                            arma::mat & X, arma::vec & Z,
@@ -221,18 +213,5 @@ Rcpp::sourceCpp("get_var_stat.cpp")
 
 
 ## Literature
-=======
-- where are our clubs
-- why are they split this way
-- how do they compare (unfiltered, sar, sem)
-=======
-## Extensions?
-- partykit
-- flattening trees
-- try model on all?
-- only spatial filtering
-
-
-
 
 <!-- Leave me alone -->

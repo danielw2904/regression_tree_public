@@ -348,11 +348,11 @@ p_clubs_sem <- ggplot() +
 
 
 
-save(poly_plot_gdp_pc, gdp_pc_plot_list, 
-     poly_plot_gdp_gr, gdp_gr_plot_list,
-     poly_ggplot_ovw, p_ovw,
-     poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
-     file = "./data/plots.Rda")
+# save(poly_plot_gdp_pc, gdp_pc_plot_list, 
+#      poly_plot_gdp_gr, gdp_gr_plot_list,
+#      poly_ggplot_ovw, p_ovw,
+#      poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
+#      file = "./data/plots.Rda")
 
 
 plot_gdp_pc <- gdp_pc_plot_list$quant_gdp_pc_00 + 

@@ -1,5 +1,5 @@
 ---
-title: "Covergence Clubs and Regression Trees"
+title: "Convergence Clubs and Regression Trees"
 subtitle: "0686 - Spatial Economics"
 author: "Nikolas, Philipp, Lukas & Daniel \\newline Based on @tree"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
@@ -10,6 +10,7 @@ output:
 ---
 
 ```{r include=FALSE}
+# allows setting knitr code-chunk size, e.g. via size="tiny"
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
@@ -19,24 +20,31 @@ library(stargazer)
 ```
 
 
-## Data Recap
+## Data
 
-European Regional Database by Cambridge Econometrics
+Recap: European Regional Database by Cambridge Econometrics
 
-We limit the dataset:
+We limit the dataset to:
 
 - timeframe 2000-2015
-- no Croatia (i.e. two fewer NUTS2 regions)
+- no Croatia (i.e. two fewer NUTS 2 regions)
 
-And use the full set of variables for our 273 regions.
+This means we get to:
+
+- use the full set of variables
+- keep a detailled London (five NUTS 2 regions)
+
 \center
-![](./ovw.png){width=50%}
+![](./ovw.png){width=90%}
 
 
 
 ## Oh what a merry regression tree
 
-<!-- We try to split the observations into clubs akin to: -->
+<!-- Remember regression trees: -->
+<!-- We try to split the observations into clubs that are similar to each other -->
+<!-- We do this with a recursive function akin to: -->
+<!-- Explain recursion + iteration -->
 Split observations into clubs:
 
 ```{r echo=TRUE, eval=FALSE}
@@ -51,13 +59,16 @@ tree <- function(data, split_vars, end_criteria) {
 }
 ```
 
+<!-- Note that we supply different end criteria - minimum club size, maximum step size and insignificant splits -->
+<!-- Other stuff includes how to divide up the scale (easier due to logs), but later more on the implementation -->
+
 ## Regression Tree
 
 <!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
 We receive a recursive, tree-like data structure that is:
 
 - hard to deal with (**a lot** of helper functions are necessary)
-- nice
+- pretty nice
 
 
 
@@ -106,6 +117,10 @@ stargazer(regs_sar, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
           dep.var.labels = "GDP p.c. growth rate 2000-15")
 ```
 
+- partykit
+- flattening trees
+- try model on all?
+- only spatial filtering
 
 ## Results
 ```{r, echo=FALSE, results='asis'}
@@ -116,8 +131,8 @@ stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
 ```
 
 
-- club-plots
-- some first LM vs. SAR vs. SEM comparisons
+<!-- Lukas with results -->
+
 
 ## Implementation I
 
@@ -202,5 +217,10 @@ Rcpp::sourceCpp("get_var_stat.cpp")
 
 
 ## Literature
+=======
+- where are our clubs
+- why are they split this way
+- how do they compare (unfiltered, sar, sem)
+
 
 <!-- Leave me alone -->

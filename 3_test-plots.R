@@ -30,7 +30,7 @@ p_ovw <- ggplot() +
         axis.title.x = element_blank(),axis.title.y = element_blank(),
         panel.background = element_blank()) + 
   scale_fill_viridis(option = "plasma", discrete = TRUE) + 
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) + 
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
         legend.background = element_rect(fill="transparent"), 
@@ -346,5 +346,3 @@ save(poly_plot_gdp_pc, gdp_pc_plot_list,
      poly_ggplot_ovw, p_ovw,
      poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
      file = "./data/plots.Rda")
-
-

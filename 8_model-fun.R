@@ -53,7 +53,7 @@ find_split <- function(
   fun = lm, predictors = 3, 
   min_obs = 3, n_splits = 10, distmat, penalty, pmult, cpp_sp, ...) {
   if(penalty & cpp_sp){
-    error("Penalty not yet implemented in C++ version!")
+    stop("Penalty not yet implemented in C++ version!")
   }
   best_vals <- matrix(NA, nrow = length(split_vars), ncol = 3)
   rownames(best_vals) <- split_vars

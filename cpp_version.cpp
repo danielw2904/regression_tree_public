@@ -1,61 +1,53 @@
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(cpp11)]]
 using namespace Rcpp;
-
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
+using namespace arma;
 
 // [[Rcpp::export]]
-List find_split(DataFrame df, DataFrame splitvars, char dep_var, CharacterVector indep_vars) {
-  Rcpp::NumericMatrix best_vals;
-  
+NumericVector get_var_stat(arma::rowvec & y, arma::mat & X, arma::vec & Z, double min_obs){
+  int num_vals = Z.size();
+  NumericVector var_stat(num_vals);
+  int i;
+  int nn = X.n_cols - 1;
+  for(i = 0; i<num_vals; i++){
+    arma::colvec coef_gre, coef_leq, resid_gre, resid_leq;
+    arma::colvec diff;
+    arma::mat vcov_gre, vcov_leq;
+    arma::mat covsum;
+    double sig2_gre, sig2_leq, statistic;
+    double val = Z(i);
+    arma::uvec leq_i = find(Z <= val);
+    arma::uvec gre_i = find(Z > val);
+    
+    arma::mat X_gre = X.rows(gre_i);
+    arma::colvec y_gre = y(gre_i);
+    arma::mat X_leq = X.rows(leq_i);
+    arma::colvec y_leq = y(leq_i);
+    
+    int n_gre = X_gre.n_rows, k_gre = X_gre.n_cols;
+    int n_leq = X_leq.n_rows, k_leq = X_leq.n_cols;
+    
+    if(n_gre > min_obs && n_leq > min_obs){
+      coef_gre = arma::solve(X_gre, y_gre);
+      coef_leq = arma::solve(X_leq, y_leq);
+      
+      resid_gre = y_gre - X_gre*coef_gre; 
+      resid_leq = y_leq - X_leq*coef_leq;
+      
+      sig2_gre = arma::as_scalar(resid_gre.t() * resid_gre)/(n_gre-k_gre);
+      sig2_leq = arma::as_scalar(resid_leq.t() * resid_leq)/(n_leq-k_leq);
+      
+      vcov_gre = sig2_gre * arma::inv(X_gre.t() * X_gre);
+      vcov_leq = sig2_leq * arma::inv(X_leq.t() * X_leq);
+      diff = coef_leq - coef_gre;
+      covsum = vcov_leq + vcov_gre;
+      statistic = arma::as_scalar(diff.t() * covsum.i() * diff);
+      var_stat[i] = statistic;
+    }else{
+      var_stat[i] = NumericVector::get_na();
+    }
+  }
+  return var_stat;
 }
 
-find_split <- function(df, splitvars, formula, fun = lm, predictors = 3){
-  best_vals <- matrix(NA, nrow = ncol(splitvars), ncol = 2)
-  rownames(best_vals) <- colnames(splitvars)
-  colnames(best_vals) <- c("Var_value", "Chisq_value")
-  spliters <- ncol(splitvars)
-  j <- 1
-  for(var in splitvars){
-    out <- vector(mode = 'double', length = spliters)
-    i <- 1
-    for(z in unique(sort(var))){ #unique(var[!var %in% sort(unique(var))[1:predictors] & 
-#           !var %in% sort(unique(var), decreasing = TRUE)[1:predictors]]) ){
-        df_list <- spliter(df, var, z)
-                                           if(enough_obs(df_list, predictors = predictors)){
-                                             model_list <- coefs(df_list, formula, fun)
-                                             res <- obj_fun(model_list)
-                                             out[i] <- as.numeric(res$stat)}
-                                           else{
-                                             out[i] <- NA
-                                           }
-                                           i <- i + 1
-                                           }
-                                           best_vals[j, 1] <- unique(sort(var))[which(out == max(out, na.rm = TRUE))]
-                                           best_vals[j, 2] <- max(out, na.rm = TRUE)
-                                           j <- j + 1
-    }
-    this <- which(best_vals[,2] == max(best_vals[,2]))
-      pval <- dchisq(best_vals[this, 2], df = predictors)
-      do_split <- list()
-      do_split$name <- rownames(best_vals)[this]
-    do_split$value <- best_vals[this, 1]
-    do_split$pval <- pval
-      return(do_split)
-  }
-  
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically 
-// run after the compilation.
-//
-
-/*** R
-timesTwo(42)
-*/

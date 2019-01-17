@@ -1,4 +1,4 @@
-n <- 1000
+n <- 100
 W <- matrix(rgamma(n^2, shape = 10, 10),  nrow = n, ncol = n)
 W[lower.tri(W)] <- 0
 W <- W %*% t(W)
@@ -41,6 +41,7 @@ source("reg_tree/8_model-fun.R")
 nodes <- get_nodes(reg_df, split_vars = c("Z1", "Z2", "Z3"), 
                    formula = "Ytilde ~ X2 + X3", verbose = TRUE, 
                    max_steps = 10, min_obs = 20, pval = 0.001, cpp = FALSE)
+df_split <- nodes2dfs(nodes, terminal = TRUE)
 library(microbenchmark)
 # Unit: seconds
 # expr

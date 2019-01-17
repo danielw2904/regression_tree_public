@@ -358,14 +358,27 @@ get_data <- function(data, plan){
   return(split_data)
 }
 
-nodes2dfs <- function(nodes, terminal = TRUE){
+nodes2dfs <- function(nodes, dat, terminal = TRUE){
   simp <- simplify_nodes(nodes)
   untr <- untree(simp)
   cand <- make_candidates(untr)
   plan <- make_plan(cand)
-  splt_data <- get_data(test_tree_data, ifelse(terminal, plan$terminal, plan$plan))
+  if(terminal){
+    plan <- plan$terminal
+  }else{
+    plan <- plan$plan
+  }
+  splt_data <- get_data(data = dat, plan)
   return(splt_data)
 }
+
+lm_list <- function(dfs, formula){
+  regs <- lapply(dfs, function(x) lm(formula = formula, data = x))
+  splits <- lapply(dfs, function(x) attr(x, which = 'split'))
+  names(regs) <- splits
+  return(regs)
+}
+
 # E.g. run:
 # tree <- get_nodes(df, split_vars, formula, verbose = TRUE)
 # reg_data <- nodes2dfs(tree)

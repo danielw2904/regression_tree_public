@@ -104,7 +104,7 @@ with the base $$f(1) = f(2) = 1$$
 
 ## Regression tree
 
-Split observations into clubs:
+Split observations into branches:
 
 ```{r echo=TRUE, eval=FALSE}
 tree <- function(data, split_vars, end_criteria) {
@@ -134,20 +134,21 @@ We receive a recursive, tree-like data structure that is:
 ![A partykit [@hothorn15] tree](party_tree.png){width=90%}
 
 
-## Implementation
+## Arboretum
 
 1. Grow the tree
-
+\vspace{1em}
 \center
-![](reg_tree_r.png){width=80%}
+![](reg_tree_r.png){width=60%}
 
-## Implementation
+## Arboretum
 
 2. Fell the tree
+\vspace{1em}
 \center
-![](simplified_nodes.png){width=80%}
+![](simplified_nodes.png){width=60%}
 
-## Implementation
+## Arboretum
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
 untree <- function(nodes, simplify = FALSE){
@@ -167,42 +168,41 @@ untree <- function(nodes, simplify = FALSE){
 }
 ```
 
-## Implementation
+## Arboretum
 
 3. Plan the furniture
-
+\vspace{1em}
 \center
-![](reg_plan.png)
+![](reg_plan.png){width=50%}
 
 ```{r,echo=TRUE, eval=FALSE}
-cumPaste <- function(vec, collps = NULL){
+cumPaste <- function(vec, collapse = NULL) {
   return(sapply(vec, function(x)
-    paste(vec[1:which(vec == x)], collapse = collps)))
+    paste(vec[1:which(vec == x)], collapse = collapse)))
 }
 ```
 
-## Implementation
+## Arboretum
 
 4. Build the furniture
-
-- E.g. for terminal nodes:
+\vspace{1em}
 \center
-![](df_list.png)
-
-- `lapply(dat, ...)` desired regression function
+![](df_list.png){width=80%}
 
 ## Computational concerns
 
-- Looping
+May turn out highly branched:
+
 - For each splitting variable
 - For each value in variable
-- Rcpp [@dirk]
+
+Thus we use Rcpp[@dirk]:
 
 1. Write function in C++
 ```{c, eval = FALSE, echo = TRUE}
 // [[Rcpp::export]]
 NumericVector get_var_stat(arma::rowvec & y, 
-                           arma::mat & X, arma::vec & Z,
+                           mat & X, vec & Z,
                            double min_obs){ // ... }
 ```
 

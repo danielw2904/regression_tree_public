@@ -45,6 +45,7 @@ lm_tests <- lm.LMtests(lm_mod, listw = listw_negexp, test = "all")
 summary(lm_tests)
 
 
+
 sar_mod <- lagsarlm(gdp_gr~gdp_init, data = data, 
                     listw = listw_negexp)
 data$gdp_gr_sar <- data$gdp_gr - coef(sar_mod)[1] * W_negexp %*% data$gdp_gr
@@ -53,7 +54,6 @@ sem_mod <- errorsarlm(gdp_gr~gdp_init, data = data,
                       listw = listw_negexp)
 data$gdp_gr_sem <- data$gdp_gr - coef(sem_mod)[1] * W_negexp %*% data$gdp_gr
 data$gdp_init_sem <- data$gdp_init - coef(sem_mod)[1] * W_negexp %*% data$gdp_init
-
 
 
 
@@ -132,13 +132,4 @@ regs_sem <- lapply(terminal_sem,
 save(data, tree_lm, tree_sar, tree_sem,
      regs_lm, regs_sar, regs_sem,
      file = "./output/run.Rda")
-
-
-
-plot(lmtree(gdp_gr ~  gdp_init | 
-              pop_den + inv_agr + inv_con + inv_ind + inv_mar + inv_nms + 
-              emp_agr + emp_con + emp_ind + emp_mar + emp_nms + thw_agr + 
-              thw_con + thw_ind + thw_mar + thw_nms, data = data))
-
-
 

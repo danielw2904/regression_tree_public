@@ -10,6 +10,7 @@ output:
 ---
 
 ```{r include=FALSE}
+# allows setting knitr code-chunk size, e.g. via size="tiny"
 def.chunk.hook  <- knitr::knit_hooks$get("chunk")
 knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
@@ -25,29 +26,28 @@ load("../../data/plots_pres.Rda")
 ```
 
 
-## Data Recap
+## Data
 
-European Regional Database by Cambridge Econometrics
-
-- Comprehensive dataset for NUTS2-regions over long period of time
+Recap: European Regional Database by Cambridge Econometrics
 
 We limit the dataset to:
 
-- Focus on period after 2000 (possible breakpoint financial crisis 2008/9)
-- Exclude Croatia (missing observations for employment indicators)
+- timeframe 2000-2015
+- no Croatia (i.e. two fewer NUTS 2 regions)
 
-Results in a dataset of 273 regions for 28 countries
+This means we get to:
 
-## Data Recap
-```{r, echo=FALSE, fig.align='center'}
-p_ovw
-```
+- use the full set of variables
+- keep a detailled London (five NUTS 2 regions)
 
 
 
 ## Oh what a merry regression tree
 
-<!-- We try to split the observations into clubs akin to: -->
+<!-- Remember regression trees: -->
+<!-- We try to split the observations into clubs that are similar to each other -->
+<!-- We do this with a recursive function akin to: -->
+<!-- Explain recursion + iteration -->
 Split observations into clubs:
 
 ```{r echo=TRUE, eval=FALSE}
@@ -62,13 +62,16 @@ tree <- function(data, split_vars, end_criteria) {
 }
 ```
 
+<!-- Note that we supply different end criteria - minimum club size, maximum step size and insignificant splits -->
+<!-- Other stuff includes how to divide up the scale (easier due to logs), but later more on the implementation -->
+
 ## Regression Tree
 
 <!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
 We receive a recursive, tree-like data structure that is:
 
 - hard to deal with (**a lot** of helper functions are necessary)
-- nice
+- pretty nice
 
 \center
 <!-- Add pretty (?) tree, dummy ahead: -->
@@ -80,6 +83,9 @@ Our results are comparable to partykit [@hothorn15].
 
 Still there's the caveat of spatially filtering the data.
 <!-- mention fancy distance stuff -->
+
+
+<!-- Lukas with results -->
 ## Motivation
 ```{r, echo=FALSE, fig.align='center'}
 grid.arrange(plot_gdp_pc, plot_gdp_gr, ncol = 2)
@@ -118,6 +124,7 @@ stargazer(regs_sar, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
 ```
 
 
+
 ## Results
 ```{r, echo=FALSE, results='asis'}
 stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq", "adj.rsq"),
@@ -127,8 +134,12 @@ stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
 ```
 
 
-- club-plots
-- some first LM vs. SAR vs. SEM comparisons
+
+## Extensions?
+- partykit
+- flattening trees
+- try model on all?
+- only spatial filtering
 
 
 ## Literatur

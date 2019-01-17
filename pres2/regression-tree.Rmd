@@ -15,7 +15,13 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
-library(stargazer)
+require(stargazer)
+require(ggplot2)
+require(gridExtra)
+```
+
+```{r, include=FALSE}
+load("../../data/plots_pres.Rda")
 ```
 
 
@@ -33,8 +39,10 @@ We limit the dataset to:
 Results in a dataset of 273 regions for 28 countries
 
 ## Data Recap
-\center
-![](./ovw.png){width=90%}
+```{r, echo=FALSE, fig.align='center'}
+p_ovw
+```
+
 
 
 ## Oh what a merry regression tree
@@ -73,13 +81,15 @@ Our results are comparable to partykit [@hothorn15].
 Still there's the caveat of spatially filtering the data.
 <!-- mention fancy distance stuff -->
 ## Motivation
-\center
-![](./gdp_pc_gr.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+grid.arrange(plot_gdp_pc, plot_gdp_gr, ncol = 2)
+```
 
 
 ## Results
-\center
-![](./clubs_lm.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+p_clubs_lm
+```
 
 
 ## Results
@@ -93,8 +103,9 @@ stargazer(regs_lm, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq",
 
 
 ## Results
-\center
-![](./clubs_semsar.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+grid.arrange(p_clubs_sar, p_clubs_sem, ncol = 2)
+```
 
 
 ## Results

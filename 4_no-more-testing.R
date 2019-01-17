@@ -39,6 +39,12 @@ diag(W_negexp) <- 0
 W_negexp <- row_stdz(W_negexp)
 listw_negexp <- mat2listw(W_negexp, style = "W")
 
+lm_mod <- lm(gdp_gr~gdp_init, data = data)
+
+lm_tests <- lm.LMtests(lm_mod, listw = listw_negexp, test = "all")
+summary(lm_tests)
+
+
 sar_mod <- lagsarlm(gdp_gr~gdp_init, data = data, 
                     listw = listw_negexp)
 data$gdp_gr_sar <- data$gdp_gr - coef(sar_mod)[1] * W_negexp %*% data$gdp_gr

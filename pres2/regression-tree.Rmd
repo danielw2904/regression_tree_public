@@ -16,7 +16,13 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
-library(stargazer)
+require(stargazer)
+require(ggplot2)
+require(gridExtra)
+```
+
+```{r, include=FALSE}
+load("../../data/plots_pres.Rda")
 ```
 
 
@@ -34,8 +40,6 @@ This means we get to:
 - use the full set of variables
 - keep a detailled London (five NUTS 2 regions)
 
-\center
-![](./ovw.png){width=90%}
 
 
 
@@ -83,14 +87,19 @@ Our results are comparable to partykit [@hothorn15].
 Still there's the caveat of spatially filtering the data.
 
 <!-- mention fancy distance stuff -->
+
+
+<!-- Lukas with results -->
 ## Motivation
-\center
-![](./gdp_pc_gr.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+grid.arrange(plot_gdp_pc, plot_gdp_gr, ncol = 2)
+```
 
 
 ## Results
-\center
-![](./clubs_lm.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+p_clubs_lm
+```
 
 
 ## Results
@@ -104,8 +113,9 @@ stargazer(regs_lm, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq",
 
 
 ## Results
-\center
-![](./clubs_semsar.png){width=80%}
+```{r, echo=FALSE, fig.align='center'}
+grid.arrange(p_clubs_sar, p_clubs_sem, ncol = 2)
+```
 
 
 ## Results
@@ -117,10 +127,7 @@ stargazer(regs_sar, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
           dep.var.labels = "GDP p.c. growth rate 2000-15")
 ```
 
-- partykit
-- flattening trees
-- try model on all?
-- only spatial filtering
+
 
 ## Results
 ```{r, echo=FALSE, results='asis'}
@@ -129,9 +136,6 @@ stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
           covariate.labels = c(NA, "Initial GDP p.c."), 
           dep.var.labels = "GDP p.c. growth rate 2000-15")
 ```
-
-
-<!-- Lukas with results -->
 
 
 ## Implementation I
@@ -221,6 +225,14 @@ Rcpp::sourceCpp("get_var_stat.cpp")
 - where are our clubs
 - why are they split this way
 - how do they compare (unfiltered, sar, sem)
+=======
+## Extensions?
+- partykit
+- flattening trees
+- try model on all?
+- only spatial filtering
+
+
 
 
 <!-- Leave me alone -->

@@ -1,5 +1,6 @@
 load("./data/processed_data.Rdata")
 
+
 library(ggplot2)
 library(viridis)
 library(dplyr)
@@ -28,7 +29,8 @@ p_ovw <- ggplot() +
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(),axis.title.y = element_blank(),
-        panel.background = element_blank()) + 
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        plot.background = element_rect(fill = "transparent", colour = NA)) + 
   scale_fill_viridis(option = "plasma", discrete = TRUE) + 
   theme(plot.margin = unit(c(0,0.5,0,0.5), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
@@ -87,7 +89,8 @@ for(i in 1:length(plot_names)){
           axis.text.x=element_blank(), axis.text.y = element_blank(), 
           axis.ticks = element_blank(), 
           axis.title.x = element_blank(), axis.title.y = element_blank(),
-          panel.background = element_blank()) + 
+          panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA)) + 
     coord_equal() + 
     scale_fill_viridis(option = "plasma", direction = -1, discrete = TRUE) + 
     theme(legend.position = "none", legend.justification = c(0,1), 
@@ -138,7 +141,8 @@ for(i in 1:length(plot_names)){
           axis.text.x=element_blank(), axis.text.y = element_blank(), 
           axis.ticks = element_blank(), 
           axis.title.x = element_blank(), axis.title.y = element_blank(),
-          panel.background = element_blank()) + 
+          panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA)) + 
     coord_equal() + 
     scale_fill_viridis(option = "plasma", direction = -1, discrete = TRUE) + 
     theme(legend.position = "none", legend.justification = c(0,1), 
@@ -284,8 +288,9 @@ p_clubs_lm <- ggplot() +
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
-        panel.background = element_blank()) + 
-  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        plot.background = element_rect(fill = "transparent", colour = NA)) + 
+  scale_fill_viridis(option = "viridis", discrete = TRUE) + 
   theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
@@ -307,8 +312,9 @@ p_clubs_sar <- ggplot() +
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(),axis.title.y = element_blank(),
-        panel.background = element_blank()) + 
-  scale_fill_viridis(option = "plasma", discrete = TRUE) + 
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        plot.background = element_rect(fill = "transparent", colour = NA)) + 
+  scale_fill_viridis(option = "viridis", discrete = TRUE) + 
   theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
         legend.direction = "horizontal", 
@@ -330,7 +336,8 @@ p_clubs_sem <- ggplot() +
         axis.text.x = element_blank(), axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_blank(), axis.title.y = element_blank(),
-        panel.background = element_blank()) + 
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        plot.background = element_rect(fill = "transparent", colour = NA)) + 
   scale_fill_viridis(option = "viridis", discrete = TRUE) + 
   theme(plot.margin = unit(c(0.5,0,0,0), "cm")) + 
   theme(legend.position = "bottom", legend.justification = "center", 
@@ -346,3 +353,15 @@ save(poly_plot_gdp_pc, gdp_pc_plot_list,
      poly_ggplot_ovw, p_ovw,
      poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
      file = "./data/plots.Rda")
+
+
+plot_gdp_pc <- gdp_pc_plot_list$quant_gdp_pc_00 + 
+  labs(title = "GDP p.c. in 2000", subtitle = "Quantile map")
+plot_gdp_gr <- gdp_gr_plot_list$quant_gdp_gr_0015 + 
+  labs(title = "GDP p.c. growth 2000-15", subtitle = "Quantile map")
+
+save(poly_plot_gdp_pc, plot_gdp_pc, 
+     poly_plot_gdp_gr, plot_gdp_gr,
+     poly_ggplot_ovw, p_ovw,
+     poly_plot_clubs, p_clubs_lm, p_clubs_sar, p_clubs_sem, 
+     file = "./data/plots_pres.Rda")

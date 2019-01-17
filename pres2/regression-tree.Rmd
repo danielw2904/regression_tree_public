@@ -15,6 +15,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   x <- def.chunk.hook(x, options)
   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
 })
+library(stargazer)
 ```
 
 
@@ -27,8 +28,9 @@ We limit the dataset:
 - timeframe 2000-2015
 - no Croatia (i.e. two fewer NUTS2 regions)
 
-And use the full set of variables for our 270 regions.
-<!-- Insert boring plot -->
+And use the full set of variables for our 273 regions.
+\center
+![](./ovw.png){width=50%}
 
 
 ## Oh what a merry regression tree
@@ -66,9 +68,49 @@ Our results are comparable to partykit [@hothorn15].
 
 Still there's the caveat of spatially filtering the data.
 <!-- mention fancy distance stuff -->
+## Motivation
+\center
+![](./gdp_pc_gr.png){width=80%}
 
 
 ## Results
+\center
+![](./clubs_lm.png){width=80%}
+
+
+## Results
+```{r, echo=FALSE, results='asis'}
+load("../../output/run.Rda")
+stargazer(regs_lm, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq", "adj.rsq"),
+          intercept.bottom = FALSE, title = "Regression results using unfiltered data",
+          covariate.labels = c(NA, "Initial GDP p.c."), 
+          dep.var.labels = "GDP p.c. growth rate 2000-15")
+```
+
+
+## Results
+\center
+![](./clubs_semsar.png){width=80%}
+
+
+## Results
+
+```{r, echo=FALSE, results='asis'}
+stargazer(regs_sar, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq", "adj.rsq"),
+          intercept.bottom = FALSE, title = "Regression results using SAR-filtered data",
+          covariate.labels = c(NA, "Initial GDP p.c."), 
+          dep.var.labels = "GDP p.c. growth rate 2000-15")
+```
+
+
+## Results
+```{r, echo=FALSE, results='asis'}
+stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq", "adj.rsq"),
+          intercept.bottom = FALSE, title = "Regression results using SEM-filtered data",
+          covariate.labels = c(NA, "Initial GDP p.c."), 
+          dep.var.labels = "GDP p.c. growth rate 2000-15")
+```
+
 
 - club-plots
 - some first LM vs. SAR vs. SEM comparisons

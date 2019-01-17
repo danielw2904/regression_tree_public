@@ -7,6 +7,7 @@ bibliography: refs.bibtex
 output: 
   beamer_presentation:
     theme: metropolis
+    colortheme: dove
 ---
 
 ```{r include=FALSE}
@@ -34,16 +35,26 @@ This means we get to:
 - use the full set of variables
 - keep a detailled London (five NUTS 2 regions)
 
-\center
-![](./ovw.png){width=90%}
+<!-- \center -->
+<!-- ![](./ovw.png){width=90%} -->
 
+## CS excursion
 
-## Oh what a merry regression tree
+### Regression vs. Iteration
+\vspace{1em}
+Fibonacci sequence: $1, 1, 2, 3, 5, 8, 13, 21, ...$
+
+Defined by $$f(n) = f(n-1) + f(n-2)$$
+with the base $$f(1) = f(2) = 1$$
 
 <!-- Remember regression trees: -->
 <!-- We try to split the observations into clubs that are similar to each other -->
 <!-- We do this with a recursive function akin to: -->
 <!-- Explain recursion + iteration -->
+
+
+## Regression tree
+
 Split observations into clubs:
 
 ```{r echo=TRUE, eval=FALSE}
@@ -61,7 +72,7 @@ tree <- function(data, split_vars, end_criteria) {
 <!-- Note that we supply different end criteria - minimum club size, maximum step size and insignificant splits -->
 <!-- Other stuff includes how to divide up the scale (easier due to logs), but later more on the implementation -->
 
-## Regression Tree
+## Oh what a merry regression tree
 
 <!-- Thus we divide up our dataset based on some splitting variables and receive trees like this one: -->
 We receive a recursive, tree-like data structure that is:
@@ -71,7 +82,7 @@ We receive a recursive, tree-like data structure that is:
 
 \center
 <!-- Add pretty (?) tree, dummy ahead: -->
-![](../pres1/tree.png){width=80%}
+![A partykit [@hothorn15] tree](party_tree.png){width=90%}
 
 ## Regression Tree
 
@@ -79,6 +90,7 @@ Our results are comparable to partykit [@hothorn15].
 
 Still there's the caveat of spatially filtering the data.
 <!-- mention fancy distance stuff -->
+
 ## Motivation
 \center
 ![](./gdp_pc_gr.png){width=80%}

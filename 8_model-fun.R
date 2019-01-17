@@ -73,7 +73,7 @@ find_split <- function(
       var_stat <- get_var_stat(y = ycpp, X = Xcpp, Z = Zcpp, min_obs = min_obs)
     }else{
     var_stat <- vector("double", length = length(split_vars))
-    if(penalty)varp_stat <- vector("double", length = legnth(split_vars))
+    if(penalty)varp_stat <- vector("double", length = length(split_vars))
     i <- 1
     split_vals <- seq(min(df[[var]]), max(df[[var]]), length.out = n_splits)
     for(z in split_vals) {

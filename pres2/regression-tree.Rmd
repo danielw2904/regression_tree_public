@@ -1,7 +1,7 @@
 ---
 title: "Covergence Clubs and Regression Trees"
 subtitle: "0686 - Spatial Economics"
-author: "Nikolas, Philipp, Lukas & Daniel"
+author: "Nikolas, Philipp, Lukas & Daniel \\newline Based on @tree"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: refs.bibtex
 output: 
@@ -33,6 +33,7 @@ And use the full set of variables for our 273 regions.
 ![](./ovw.png){width=50%}
 
 
+
 ## Oh what a merry regression tree
 
 <!-- We try to split the observations into clubs akin to: -->
@@ -58,8 +59,10 @@ We receive a recursive, tree-like data structure that is:
 - hard to deal with (**a lot** of helper functions are necessary)
 - nice
 
-\center
+
+
 <!-- Add pretty (?) tree, dummy ahead: -->
+\center
 ![](../pres1/tree.png){width=80%}
 
 ## Regression Tree
@@ -67,6 +70,7 @@ We receive a recursive, tree-like data structure that is:
 Our results are comparable to partykit [@hothorn15].
 
 Still there's the caveat of spatially filtering the data.
+
 <!-- mention fancy distance stuff -->
 ## Motivation
 \center
@@ -115,6 +119,88 @@ stargazer(regs_sem, header = FALSE, font.size = "tiny", omit.stat = c("f", "rsq"
 - club-plots
 - some first LM vs. SAR vs. SEM comparisons
 
+## Implementation I
 
-## Literatur
+1. Grow the tree
+
+\center
+![](reg_tree_r.png){width=80%}
+
+## Implementation II
+
+2. Fell the tree
+
+\center
+![](simplified_nodes.png){width=80%}
+
+## Implementation II
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+untree <- function(nodes, simplify = FALSE){
+  out <- list()
+  lumberjack <- function(nodes){ 
+    # ...
+    parent <- parent.frame()
+    pos <- length(parent$out) + 1
+    # if(...){ ...
+    }else if(term_leq){
+      parent$out[[pos]] <- leq
+      Recall(gre)
+    }
+  #...} # lumberjack
+  lumberjack(nodes)
+  return(out)
+}
+
+```
+
+## Implementation III
+
+3. Plan the furniture
+
+\center
+![](reg_plan.png)
+
+```{r,echo=TRUE, eval=FALSE}
+cumPaste <- function(vec, collps = NULL){
+  return(sapply(vec, function(x)
+    paste(vec[1:which(vec == x)], collapse = collps)))
+}
+```
+
+## Implementation IV
+
+4. Build the furniture
+
+- E.g. for terminal nodes:
+\center
+![](df_list.png)
+
+- ```lapply(dat, ...)``` desired regression function
+
+## Computational concerns
+
+- Looping
+
+    - For each splitting variable
+        - For each value in variable
+    
+- Rcpp [@dirk]
+
+1. Write function in C++
+```{c, eval = FALSE,echo = TRUE}
+// [[Rcpp::export]]
+NumericVector get_var_stat(arma::rowvec & y, 
+                           arma::mat & X, arma::vec & Z,
+                           double min_obs){ // ... }
+```
+
+2. Source in R
+```{r, eval = FALSE, echo = TRUE }
+Rcpp::sourceCpp("get_var_stat.cpp")
+```
+
+
+## Literature
+
 <!-- Leave me alone -->

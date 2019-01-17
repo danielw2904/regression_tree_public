@@ -57,7 +57,15 @@ w_tree <- get_nodes(test_tree_data,
                     penalty = TRUE, pmult = 1000, distmat = dist,
                     min_obs = 50, verbose = TRUE)
 
+s_nodes <- simplify_nodes(w_tree)
 
+u_nodes <- untree(s_nodes)
+
+cand <- make_candidates(u_nodes)
+
+plan <- make_plan(cand)
+
+dat <- get_data(test_tree_data, plan$terminal)
 #node_summary(w_tree[[1]], 'leq')
 
 splt_data <- nodes2dfs(w_tree)

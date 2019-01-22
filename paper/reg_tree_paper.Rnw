@@ -1,0 +1,114 @@
+\documentclass[11pt, bibliography=totocnumbered]{article}
+\usepackage[T1]{fontenc} %font encoding
+\usepackage[utf8]{inputenc} %input encoding
+\usepackage[english]{babel}
+\usepackage{amsmath} 
+\usepackage{graphicx, subfig}
+\usepackage[bibstyle=authoryear, citestyle=authoryear, backend=bibtex]{biblatex}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{nccmath}
+\usepackage{mdwtab}
+\usepackage{mathenv}
+\usepackage[autostyle]{csquotes}  
+\usepackage[width=.75\textwidth]{caption}
+\usepackage[justification=centering]{caption}
+\usepackage{float}
+
+%\setlength{\abovecaptionskip}{-30pt plus 3pt minus 2pt}
+%\setlength{\belowcaptionskip}{-10pt plus 3pt minus 2pt}
+\captionsetup[figure]{font=footnotesize}
+\captionsetup[table]{font=footnotesize}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+
+
+\bibliography{litera}
+
+\setlength{\parskip}{5pt}%
+\setlength{\parindent}{0pt}%
+
+\makeatletter 
+\setlength{\@fptop}{0pt}
+\makeatother
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\l@section}
+  {\hfil}
+  {\leaders\hbox{\normalfont$\m@th\mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill}
+  {}{}
+\makeatother
+% Damit beim Table of Contents auch bei Sections Punkte gezogen werden
+
+\usepackage{placeins}
+% für Unterbrechen von Floatingumgebung
+
+\begin{document}
+\SweaveOpts{echo=FALSE, warning=FALSE, error=FALSE, message=FALSE, eval = TRUE, concordance=TRUE}
+
+
+<<libraries, include=FALSE, echo=FALSE, message=FALSE>>=
+x <- c("rgdal", "rgeos", "dplyr", "ggplot2", "xtable", "stargazer", "gridExtra", "spdep", "readr", "reshape2", "raster", "viridis")
+invisible(lapply(x, require, character.only = TRUE))
+@
+
+<<functions>>=
+
+@
+
+
+
+
+\title{Regression Tree Club Convergence Analysis}
+\author{Nikolas Kuschnig, Lukas Vashold, Philipp Warum, Daniel Winkler}
+%\date{}
+\maketitle
+\rule{\textwidth}{0.5pt}
+\vspace{3cm}
+
+
+\section{Introduction}
+\label{sec:intro}
+\FloatBarrier
+
+One of the most discussed topics in macroeconomics, if not in economics overall, is the development of economies over time, be it on the national or on the regional level. Growth of these economies is usually associated with an increase of well-being of their respective inhabitants (e.g. \textcite{easterlin1974does}, \textcite{stevenson2008economic}) and is therefore a desirable objective. However, large disparities between the level of income per capita and the growth rates in the subsequent years of these economic entitites can be observed when comparing them to each other. In general, it is observable that regions with a lower initial level of income exhibit a higher rate of growth than richer regions. Several convergence theories emerged out of this observation, which try to address this phenomenon in different ways (e.g. \textcite{solow1956contribution}, \textcite{swan1956economic}, \textcite{baumol1986productivity}). One of the most prevalent one is the \textit{"club convergence hypothesis"} that pools economies which share similar initial conditions and structural characteristics in so-called convergence clubs. The regions in those clubs will converge to each other towards a common steady state of growth. This allows for multiple steady-states and implies convergence within these clubs but not necessarily between them.\\
+There is a vast amount of empirical papers examining the club convergence hypothesis with European regions as the subject of study (e.g. \textcite{fischer2006pan}, \textcite{alexiadis2012convergence},  \textcite{doran2013decomposing}) covering different timespans and identification methods that are used in order to pool regions into their corresponding club. 
+
+
+\FloatBarrier
+
+\section{Testing for Convergence}
+\label{sec:method}
+
+\subsection{Convergence Analysis}
+\label{subsec:analysis}
+
+Analysing the economic development of regions of different sizes has a long tradition in the academic discourse between scholars and has often been the basis for policy decisions. Originating from the neoclassical theory with its general focus on equilibrating market forces, it has long been the dominant view that in the abscence of severe disruptions of these forces, there is a strong tendency towards income disparities to vanish, at least in the long-run. Therefore, it would only be natural for economies to converge towards each other (e.g. \textcite{solow1956contribution}, \textcite{borts1964economic}). This view has been challenged by the proponents of different schools of thought, which state that there is rather a divergence between economies if distribution is left to market forces alone. Because of the tendency of agglomeration of production factors and therefore also concentration of output, they argue that there will be a rather uneven development of regions than an even one (e.g. \textcite{myrdal1957economic}, \textcite{kaldor1970case}). Other important theories point out that times of convergence or divergence can alternate and that neither one of these processes is persistent over time but rather happen in episodes (e.g. \textcite{harvey2006limits}, \textcite{massey1995spatial}). Thus, following this logic, empirical studies should consider various timeframes and account for the different stages of the business cycle in order to get conclusive results. Furthermore, the convergence process seems to be dependent on the chosen level of observations (e.g. regional, national level). Convergence seems to be achievable on the national level, but, partly because of agglomeration and urbanisation effects within countries \parencite{krugman1991increasing}, divergence on the inter-regional level seems to be plausible (e.g. \textcite{smith2010uneven}, \textcite{doran2013decomposing}). \\
+With the revived interest in growth theories and the empirics behind those theories in the 1980s, two main concepts of measuring convergence (or divergence) have come up. The first one is the concept of $\beta$~-convergence, which basically states that when regressing the regional growth rate of per capita income for a given time period on the level of per capita income of these regions in the first observation date, a negative coefficient would imply convergence. This stems from the logic that if the level of per capita income in the beginning of a certain time period has a negative effect on the growth rate in the subsequent years, regions (or countries) with a higher initial level would grow slower than the ones with lower income per capita and therefore they would converge towards each other. Vice versa, a positive coefficient would be a sign of divergence between the regions. The second concept, $\sigma$~-convergence, is closely related to this notion, but focusses on the variance of levels of income per capita levels. Here, a set of regions is said to be converging if the variance of these levels is declining over a given time period. Thus, thanks to their relatedness one could say that \textit{"[t]he existence of $\beta$~-convergence will tend to generate declining dispersion or $\sigma$~-convergence"} as is neatly summarised by \textcite{martin1998slow} among others. However, it should also be noted that for $\sigma$~-convergence to take place $\beta$~-convergence is necessary, but not sufficient, as the first one also depends on the error terms of the regressions conducted in order to quantify this effect. For an extensive discussion on the differences between these two concepts of concergence, see \textcite{furceri2005beta}. This thesis will adopt the notion of $\beta$~-convergence as the concept that will be investigated in order to determine if there is evidence for income convergence among different clubs of European regions. 
+
+\begin{equation}
+\label{equ1}
+\frac{1}{T}\ln{\frac{y_{it+T}}{y_{it}}}=\alpha+\beta\ln{y_{it}}+u_i
+\end{equation}
+
+Thus, equation~(\ref{equ1}) shows the basic setting for the regression used in the following analysis where $y_t$ refers to income per capita at the beginning of the observation period, $\alpha$ can be interpreted as the steady state that the various clubs are converging to (if they do), $u_i$ stands for the error term assumed to be centered around zero and to be normally distributed (this assumption will be reconsidered and altered in section~\ref{subsec:weight}), $\beta$ is the coefficient of interest and measures the speed of convergence. However, $\beta$ cannot be interpreted right away, but has to be transformed in order to be interpretable. Following \textcite{barro1992convergence} this yields:
+
+\begin{equation}
+\label{equ2}
+\beta^*=-\frac{1}{T}ln{{1-T\beta}}
+\end{equation}
+
+Estimating equation~\ref{equ2} with OLS and interpreting the coefficients in that way, thus \textit{"averaging across [i] in a cross-section - regions, states, countries - constitutes the canonical $\beta$~convergence analysis"} \parencite{quah1996empirics}.
+This kind of convergence analysis was conducted extensively with different regional foci and time periods (e.g. \textcite{barro1995economic}, \textcite{armstrong1995trends} or \textcite{doran2013decomposing}). However, even though there was evidence for economic convergence between countries or regions that possess similar characteristics, this finding does in general not hold true when including countries or regions that do not share these characteristics. \\
+Out of this recognition arose two hypotheses that were trying to deal with these implications. The \textit{"conditional convergence hypothesis"} states that countries or regions that are similar in their structural characteristics even when they do not share the same initial conditions. Thus, every entity has their own, unique steady state that it converges to \parencite{mankiw1992contribution} depending for example on their respective rate of technology growth, institutional quality or population growth. Proponents of this approach argue that the neoclassical growth model brought forward by \textcite{solow1956contribution}, \textcite{swan1956economic} and similar naturally leads to the conditional convergence of income per capita as the most plausible hypothesis. However, as \textcite{galor1996convergence} argues on a theoretical level, the \textit{"club convergence hypothesis"} is also a viable and competing hypothesis to conditional one. It differs from the first one in the regard that it allows for multiple steady-state equilibria and states that economies tend to converge when they exhibit similar structural characteristics and if they share similar initial conditions as well. In this sense it is needed to identify such clubs (described in more detail in subsection~\ref{subsec:ident}) and test for convergence in these clubs. Convergence between these clubs is no necessity, so disparities between them could persist or even extend. As one of the first studies to consider the possibility of different convergence clubs of regions, \textcite{baumol1986productivity} acknowledges that there is some evidence for this theory. Following studies like that of \textcite{quah1996empirics} support this view, at least to a certain extent. The empirics on club convergence were growing over time and newer contributions (e.g. \textcite{alexiadis2012convergence}, \textcite{ghosh2013regional}) also shed some new light onto these insights. While not every study comes to the conclusion that the convergence hypothesis is robust to certain aspects (for instance \textcite{fischer2006pan} conclude that once controlling for spatial dependence, there seems to be no significant evidence for club convergence), different procedures were developed in order to identify such clubs effectively.\\
+
+
+
+\subsection{Club Identification}
+\label{subsec:ident}
+
+In order to identify convergence clubs, two approaches have been chosen. The first one focuses on an identfication based on differences in the initial conditions of a region as well as the initial conditions of regions that are surrounding this region. It can therefore be seen as a procedure that combines the regional distribution of initial conditions with the initial conditions of the region itself and is based on the $G^*$-statistic developed by \textcite{getis1992analysis}. The second approach rather focuses on the transition paths of different regions and how they evolved over time. It tries to group regions depending on those transition paths and can therefore, in distinction to the first procedure, be seen as an approach that focuses rather on the individual evolvement of regions in a certain period without treating the spatial distribution of initial conditions as a key factor for its clubbing. The differences between these procedures makes it quite interesting to study both of them and compare their outcomes.
+
+
+
+\end{document}
